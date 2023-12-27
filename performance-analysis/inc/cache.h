@@ -1,0 +1,553 @@
+#ifndef CACHE_H
+#define CACHE_H
+
+#include "memory_class.h"
+#include "ring.h"
+#include "aes.h"
+#include "smt.h"
+#include <bitset>
+#include "ceaser.h"
+
+// PAGE
+extern uint32_t PAGE_TABLE_LATENCY, SWAP_LATENCY;
+
+//typedef bitset<32> word;
+//const int Nk = 4;   // Nk is the number of words of the input key
+//const int Nr = 10;  // AES-128 requires 10 rounds of encryption
+
+//typedef bitset<8> byte;
+
+// CACHE TYPE
+#define IS_ITLB 0 //Instruction TLB
+#define IS_DTLB 1 //Data TLB
+#define IS_STLB 2 //Second Level TLB (does not have a lower level)
+#define IS_L1I  3
+#define IS_L1D  4
+#define IS_L2C  5
+#define IS_LLC  6
+
+// INSTRUCTION TLB
+#define ITLB_SET 16
+#define ITLB_WAY 4
+#define ITLB_RQ_SIZE 16
+#define ITLB_WQ_SIZE 16
+#define ITLB_PQ_SIZE 0
+#define ITLB_MSHR_SIZE 8
+#define ITLB_LATENCY 1
+
+// DATA TLB
+#define DTLB_SET 16
+#define DTLB_WAY 4
+#define DTLB_RQ_SIZE 16
+#define DTLB_WQ_SIZE 16
+#define DTLB_PQ_SIZE 0
+#define DTLB_MSHR_SIZE 8
+#define DTLB_LATENCY 1
+
+// SECOND LEVEL TLB
+#define STLB_SET 128
+#define STLB_WAY 12
+#define STLB_RQ_SIZE 32
+#define STLB_WQ_SIZE 32
+#define STLB_PQ_SIZE 0
+#define STLB_MSHR_SIZE 16
+#define STLB_LATENCY 8
+
+// L1 INSTRUCTION CACHE
+//#define L1I_SET 64
+#define L1I_WAY 8
+//#define L1I_RQ_SIZE 64
+//#define L1I_WQ_SIZE 64 
+//#define L1I_PQ_SIZE 8
+//#define L1I_MSHR_SIZE 8
+#define L1I_LATENCY 1
+
+// L1 DATA CACHE
+//#define L1D_SET 64
+#define L1D_WAY 12
+//#define L1D_RQ_SIZE 64
+//#define L1D_WQ_SIZE 64 
+//#define L1D_PQ_SIZE 8
+//#define L1D_MSHR_SIZE 16 
+#define L1D_LATENCY 5 
+
+// L2 CACHE
+//#define L2C_SET 1024
+#define L2C_WAY 8
+//#define L2C_RQ_SIZE 32
+//#define L2C_WQ_SIZE 32
+//#define L2C_PQ_SIZE 16
+//#define L2C_MSHR_SIZE 32
+#define L2C_LATENCY 10  // 5 (L1I or L1D) + 10 = 15 cycles
+
+// LAST LEVEL CACHE
+// #define LLC_SET 2048*NUM_CPUS
+
+#if NUM_CPUS == NUM_SLICES
+ 	//Sliced LLC
+//	#define LLC_SET 2048
+	#define LLC_WAY 12
+//	#define LLC_RQ_SIZE L2C_MSHR_SIZE //48
+//	#define LLC_WQ_SIZE L2C_MSHR_SIZE //48
+//	#define LLC_PQ_SIZE 32
+//	#define LLC_MSHR_SIZE 64
+#endif
+#if NUM_CPUS != NUM_SLICES
+	//Single LLC
+//	#define LLC_SET NUM_CPUS*2048
+	#define LLC_WAY 12
+//	#define LLC_RQ_SIZE NUM_CPUS*L2C_MSHR_SIZE //48
+//	#define LLC_WQ_SIZE NUM_CPUS*L2C_MSHR_SIZE //48
+//	#define LLC_PQ_SIZE NUM_CPUS*32
+//	#define LLC_MSHR_SIZE NUM_CPUS*64
+ // 5 (L1I or L1D) + 10 + 20 = 35 cycle
+#endif
+
+#define MAYA 1
+
+///* Analysing single port
+#if CEASER_LLC == 1 || CEASER_S_LLC == 1
+       #define LLC_LATENCY (20  + CEASER_LATENCY)  // 5 (L1I or L1D) + 10 + 20 = 35 cycles 
+#elif MAYA == 1
+        #define LLC_LATENCY (24 + 4)
+#else
+        #define LLC_LATENCY (24)
+#endif
+//#define No_Remapping
+//uncomment it for no remapping
+//#define No_Randomization
+//uncomment it for no randomization
+//For multi_step_reallocation : 1 else 0
+//#define multi_step_relocation 1
+//#define bfs_on 1
+//#define victim_cache_is_on 1
+struct accesses_after_remap {
+        uint32_t llc_access; //count total llc accesses before filling the whole set after remaping  
+        uint32_t full;      // cache is full or not
+	uint32_t llc_eviction; // count total llc evictions before filling the whole set after remaping
+};
+
+struct bfs_queue {
+	uint64_t tag;
+	uint64_t set;
+	int way;
+	uint64_t parent_tag;
+	int number_of_remap;
+	int child_set;
+	int child_way;
+};
+struct tag_array {
+	uint64_t tag;
+	uint32_t set;
+	int way;
+	int valid;
+    int priority;
+};
+class CACHE : public MEMORY {
+  public:
+/*----------------------------------------CEASER-S----------------------------------------------*/
+    struct accesses_after_remap accesses_after_remapping[LLC_SET]; //accesses_after_remapping_that_fills_the_cache_set_again
+    uint32_t Sptr,Actr;
+    uint64_t total_sets_remapped,total_llc_stalled,total_stall_cycle;
+    uint32_t APLR;//Remap a 16-way set after 1600 accesses to cache
+    //bitset<42> k, curr_key, next_key;
+    //byte k[16], curr_key[16], next_key[16];
+    //word k[4*(Nr+1)],curr_key[4*(Nr+1)],next_key[4*(Nr+1)];
+    //word cur_keyy[16][4*(Nr+1)],next_keyy[16][4*(Nr+1)];//CEASER-s
+    uint8_t k[16], curr_keys[16][16], next_keys[16][16], curr_key[16], next_key[16];
+    uint32_t ceaser_s_set[16],ceaser_s_next_set[16],c_or_n=0;//CEASER-S
+    int partitions; //16 for scatter cache 2 for CEASER_S
+    int llc_queue_turn=0,SLICE_NUM = 0;
+    uint64_t cache_stall_cycle, encryption_stall_cycle; // To stall cache while remapping
+    uint64_t decryption_stall_cycle;
+	uint64_t set_access_counter[NUM_CPUS][2048];
+	int watermark, is_remap_complete=1,cycle_laps_due_to_wq=0,total_laps=0;
+	unsigned long long total_read_packets[NUM_CPUS],
+                total_prefetch_packets[NUM_CPUS],
+                total_mshr_packets[NUM_CPUS];
+	unsigned long long total_access_time_rq[NUM_CPUS],total_access_time_pq[NUM_CPUS],total_access_time_mshr[NUM_CPUS];
+	unsigned long long total_encryption_time_rq[NUM_CPUS],total_encryption_time_pq[NUM_CPUS],total_encryption_time_mshr[NUM_CPUS];
+	unsigned long long total_waiting_time_in_rq[NUM_CPUS],total_waiting_time_in_mshr[NUM_CPUS],total_waiting_time_in_pq[NUM_CPUS];
+	uint64_t eviction_set[2048][17],set_numbers_for_eviction_set[2048];
+	uint8_t *out, *in;
+	int remap_Table_size=0,remap_Table[LLC_SET];
+	uint64_t count_remap=0, blocks_less_evicted=0,invalid_blocks_before_remapping=0;
+	uint64_t reuse_distance[2048*100],victim_hit,total_blocks_remapped=0;
+	uint64_t dead_block=0, total_bfs=0;
+	//BFS
+	int marked[2048];
+	struct bfs_queue queue[50000];
+	int extra_tag_ways = 15;
+    int threshold_pr0 = 2048*6;
+    int num_pr0 = 0;
+    int sae_count = 0;
+    uint64_t interference_count = 0;
+	uint32_t tag0_set = 0, tag1_set = 0;
+	struct tag_array tag0[LLC_SET][/*extra_tag_ways */ 15], tag1[LLC_SET][/*extra_tag_ways*/ 15];
+
+//	unsigned long long read_packet_counter=0,mshr_packet_counter=0;
+    //bool curr_or_next_key[LLC_SET][LLC_WAY];
+/*--------------------------------------------------------------------------------------------*/
+
+    uint32_t cpu;
+    const string NAME;
+    const uint32_t NUM_SET, NUM_WAY, NUM_LINE, WQ_SIZE, RQ_SIZE, PQ_SIZE, MSHR_SIZE;
+    uint32_t LATENCY;
+    BLOCK **block;
+    BLOCK **victim_cache;
+    int fill_level;
+    uint32_t MAX_READ, MAX_FILL;
+    uint32_t reads_available_this_cycle;
+    uint8_t cache_type;
+    ROUTER *this_router=NULL; //@Anuj FOR LLC and L2C
+    // prefetch stats
+    uint64_t pf_requested,
+             pf_issued,
+             pf_useful,
+             pf_useless,
+             pf_fill,
+   //@Neelu
+	     pf_late,
+	     pf_dropped,
+	     pf_lower_level;
+    uint64_t roi_pf_requested,
+             roi_pf_issued,
+             roi_pf_useful,
+             roi_pf_useless,
+             roi_pf_fill,
+   //@Neelu
+             roi_pf_late,
+             roi_pf_dropped,
+             roi_pf_lower_level;
+    // queues
+    PACKET_QUEUE WQ{NAME + "_WQ", WQ_SIZE}, // write queue
+                 RQ{NAME + "_RQ", RQ_SIZE}, // read queue
+                 PQ{NAME + "_PQ", PQ_SIZE}, // prefetch queue
+                 MSHR{NAME + "_MSHR", MSHR_SIZE}, // MSHR
+                 PROCESSED{NAME + "_PROCESSED", ROB_SIZE}; // processed queue
+
+    uint64_t sim_access[NUM_CPUS][NUM_TYPES],
+             sim_hit[NUM_CPUS][NUM_TYPES],
+             sim_miss[NUM_CPUS][NUM_TYPES],
+             roi_access[NUM_CPUS][NUM_TYPES],
+             roi_hit[NUM_CPUS][NUM_TYPES],
+             roi_miss[NUM_CPUS][NUM_TYPES],
+                sim_miss_penalty[NUM_CPUS][NUM_TYPES],
+                roi_miss_penalty[NUM_CPUS][NUM_TYPES];
+
+    uint64_t total_miss_latency[NUM_CPUS], roi_miss_latency[NUM_CPUS];
+
+    // constructor
+    CACHE(string v1, uint32_t v2, int v3, uint32_t v4, uint32_t v5, uint32_t v6, uint32_t v7, uint32_t v8) 
+        : NAME(v1), NUM_SET(v2), NUM_WAY(v3), NUM_LINE(v4), WQ_SIZE(v5), RQ_SIZE(v6), PQ_SIZE(v7), MSHR_SIZE(v8) {
+
+/*----------------------------------------CEASER----------------------------------------------*/
+	watermark = 0;
+	is_remap_complete = 1;
+    Sptr=0;
+    Actr=0;
+    total_sets_remapped = 0;
+    total_llc_stalled=0;
+    total_stall_cycle=0;
+    out = (uint8_t*) malloc(8 * sizeof(uint8_t));
+    in = (uint8_t*) malloc(8 * sizeof(uint8_t));
+    #if (remap_on_evictions == 1)
+    //Tag_compare_latency = 3 ;
+    	#if (CEASER_S_LLC == 1)
+		if(partitions == 2 )
+        		APLR = 14;
+		if(partitions == 1)
+			APLR = 2;    //10;
+		if(partitions == 16)
+			APLR = 39;
+    	#endif
+	#if(CEASER_LLC ==  1)
+		APLR=10;
+	#endif
+    #endif
+#if (remap_on_evictions == 0)
+        APLR = 100; //Remap a 16-way set after 1600 accesses to cache
+#endif
+
+//    APLR = 100;//Remap a 16-way set after 1600 accesses to cache
+    //curr_key=std::bitset<42>(0x3458A458BCD);
+        //next_key = std::bitset<42>(0x3124578DEAB);
+        //curr_key = 1998882345687954, next_key = 15675654278990876;
+ 
+//-----------------------CEASER-S-----------------------
+   byte cs_key[16];//for ceaser-s_cache  
+//cur_l_keyy[16][4*(Nr+1)],cur_r_keyy[16][4*(Nr+1)],next_l_keyy[16][4*(Nr+1)],next_r_keyy[16][4*(Nr+1)];
+ /*for(int part=0;part<r;part++)
+        { 
+           for(int z=0;z<16;z++)
+		cs_key[z] = std::bitset<8>(rand());
+	  KeyExpansion(cs_key,next_key);  
+	  for(int z=0;z<(4*(Nr+1));z++)
+		{  
+                  cur_keyy[part][z]=next_key[z];
+                 
+                }
+           
+           for(int z=0;z<16;z++)
+		cs_key[z] = std::bitset<8>(rand());
+	  KeyExpansion(cs_key,next_key);
+           for(int z=0;z<(4*(Nr+1));z++)
+		{  
+                  next_keyy[part][z]=next_key[z];
+                 
+                }
+        }*/
+	memset(ceaser_s_set, 0, sizeof(ceaser_s_set));
+        memset(ceaser_s_next_set, 0, sizeof(ceaser_s_next_set));
+    
+  
+//-------------------CEASER-s-----------------
+     /*byte curr_k[16] = {0x5b, 0x7e, 0x15, 0x16,
+                    0x28, 0xae, 0xd2, 0xa6,
+                    0xab, 0xf7, 0x75, 0x88,
+                    0x09, 0xcf, 0x4f, 0x7c};
+
+        //memcpy(curr_key,curr_k,sizeof(curr_key));
+    byte next_k[16] = {0x72, 0x88, 0x31, 0x40,
+                      0x43, 0x5a, 0x31, 0x37,
+                      0xf6, 0x30, 0x58, 0x07,
+                      0xa8, 0x8d, 0xa2, 0x84};
+    KeyExpansion(curr_k,curr_key);
+    KeyExpansion(next_k,next_key);*/
+        //for(uint32_t i=0; i<LLC_SET; i++)
+        //      for(uint32_t j=0; j <LLC_WAY; j++)
+        //              curr_or_next_key[i][j] = 0;
+	for(uint32_t i=0; i<16 ; i++)
+	{
+		for(uint32_t j=0; j<16; j++)
+		{
+			curr_keys[i][j] = rand() % 256;
+			next_keys[i][j] = rand() % 256;
+		}
+		curr_key[i] = rand() % 256;
+		next_key[i] = rand() % 256;
+	}
+
+	for(int i=0;i<2048;i++)
+	{
+		set_numbers_for_eviction_set[i]=0;
+		for(int j=0;j<17;j++)
+		{
+			eviction_set[i][j]=0;
+		}
+	}  
+		encryption_stall_cycle=0;
+                cache_stall_cycle=0;
+                decryption_stall_cycle=0;
+                
+	for(int i=0;i<2048;i++)
+	{
+		accesses_after_remapping[i].full=0;
+		accesses_after_remapping[i].llc_access=0;
+		accesses_after_remapping[i].llc_eviction=0;
+		remap_Table[i] = 5000;
+		marked[i]=0; //BFS
+	}
+	for(int i=0;i<LLC_SET;i++)
+	{
+		for(int j = 0;j<extra_tag_ways;j++)
+		{
+			tag0[i][j].tag=0;
+			tag0[i][j].set=0;
+			tag0[i][j].way=0;
+			tag0[i][j].valid=0;
+			tag0[i][j].priority=-1;
+			tag1[i][j].tag=0;
+            tag1[i][j].set=0;
+            tag1[i][j].way=0;
+            tag1[i][j].valid=0;
+            tag1[i][j].priority=-1;
+		}
+	}
+	for(int i=0;i<2048*100;i++)
+		reuse_distance[i]=0;
+/*--------------------------------------------------------------------------------------------*/
+
+            LATENCY = 0;
+
+        // cache block
+        block = new BLOCK* [NUM_SET];
+        for (uint32_t i=0; i<NUM_SET; i++) {
+            block[i] = new BLOCK[NUM_WAY]; 
+
+            for (uint32_t j=0; j<NUM_WAY; j++) {
+                block[i][j].lru = j;
+            }
+        }
+	victim_cache = new BLOCK* [1]; //Victim_cache have only one set
+        for (uint32_t i=0; i<1; i++) {
+            victim_cache[i] = new BLOCK[NUM_WAY];
+
+            for (uint32_t j=0; j<NUM_WAY; j++) {
+                victim_cache[i][j].lru = j;
+            }
+        }
+
+        for (uint32_t i=0; i<NUM_CPUS; i++) {
+            upper_level_icache[i] = NULL;
+            upper_level_dcache[i] = NULL;
+		roi_miss_latency[i] = 0;
+            for (uint32_t j=0; j<NUM_TYPES; j++) {
+                sim_access[i][j] = 0;
+                sim_hit[i][j] = 0;
+                sim_miss[i][j] = 0;
+                roi_access[i][j] = 0;
+                roi_hit[i][j] = 0;
+                roi_miss[i][j] = 0;
+                sim_miss_penalty[i][j] = 0;
+                roi_miss_penalty[i][j] = 0;
+            }
+        }
+	for (uint32_t j=0; j<NUM_CPUS; j++)
+		for (uint32_t i=0; i<2048; i++)
+			set_access_counter[j][i] = 0;
+	for(int i=0; i< NUM_CPUS;i++)
+		total_miss_latency[i] = 0;
+	for(int i=0;i< NUM_CPUS;i++)
+	{
+		total_waiting_time_in_rq[i]=0;
+		total_waiting_time_in_pq[i]=0;
+		total_waiting_time_in_mshr[i]=0;
+		total_read_packets[i]=0;
+		total_prefetch_packets[i]=0;
+		total_mshr_packets[i]=0;
+		total_access_time_rq[i]=0;
+		total_access_time_pq[i]=0;
+		total_access_time_mshr[i]=0;
+		total_encryption_time_rq[i]=0;
+		total_encryption_time_pq[i]=0;
+		total_encryption_time_mshr[i]=0;
+	}
+
+        lower_level = NULL;
+        extra_interface = NULL;
+        fill_level = -1;
+        MAX_READ = 1;
+        MAX_FILL = 1;
+
+        pf_requested = 0;
+        pf_issued = 0;
+        pf_useful = 0;
+        pf_useless = 0;
+        pf_fill = 0;
+	pf_late = 0;
+    	pf_lower_level = 0;
+	pf_dropped=0;
+    };
+
+    // destructor
+    ~CACHE() {
+        cout<<NAME<<" destructor called"<<"\n";
+        for (uint32_t i=0; i<NUM_SET; i++)
+            delete[] block[i];
+        delete[] block;
+    };
+
+    // functions
+    int  add_rq(PACKET *packet),
+         add_wq(PACKET *packet),
+         add_pq(PACKET *packet);
+
+    void return_data(PACKET *packet),
+         operate(),
+         increment_WQ_FULL(uint64_t address);
+
+    uint32_t get_occupancy(uint8_t queue_type, uint64_t address),
+             get_size(uint8_t queue_type, uint64_t address);
+  //  void print_Queue(uint8_t queue_type);
+
+    int  check_hit(PACKET *packet, uint32_t set),
+         invalidate_entry(uint64_t inval_addr),
+         check_mshr(PACKET *packet),
+         prefetch_line(uint64_t ip, uint64_t base_addr, uint64_t pf_addr, int prefetch_fill_level, uint32_t prefetch_metadata),
+         kpc_prefetch_line(uint64_t base_addr, uint64_t pf_addr, int prefetch_fill_level, int delta, int depth, int signature, int confidence, uint32_t prefetch_metadata);
+
+    void remove_random_tag(int tag_number, int tag);
+    void handle_fill(),
+         handle_writeback(),
+         handle_read(),
+         handle_prefetch();
+    int add_read_to_lower_level(uint32_t mshr_index,uint32_t read_index,uint32_t read_cpu);
+    void add_mshr(PACKET *packet),
+         update_fill_cycle(),
+         llc_initialize_replacement(),
+         update_replacement_state(uint32_t cpu, uint32_t set, uint32_t way, uint64_t full_addr, uint64_t ip, uint64_t victim_addr, uint32_t type, uint8_t hit),
+         llc_update_replacement_state(uint32_t cpu, uint32_t set, uint32_t way, uint64_t full_addr, uint64_t ip, uint64_t victim_addr, uint32_t type, uint8_t hit),
+         lru_update(uint32_t set, uint32_t way),
+         fill_cache(uint32_t set, uint32_t way, PACKET *packet),
+         replacement_final_stats(),
+         llc_replacement_final_stats(),
+         //prefetcher_initialize(),
+         l1d_prefetcher_initialize(),
+         l2c_prefetcher_initialize(),
+         llc_prefetcher_initialize(),
+         prefetcher_operate(uint64_t addr, uint64_t ip, uint8_t cache_hit, uint8_t type),
+         l1d_prefetcher_operate(uint64_t addr, uint64_t ip, uint8_t cache_hit, uint8_t type),
+         prefetcher_cache_fill(uint64_t addr, uint32_t set, uint32_t way, uint8_t prefetch, uint64_t evicted_addr),
+         l1d_prefetcher_cache_fill(uint64_t addr, uint32_t set, uint32_t way, uint8_t prefetch, uint64_t evicted_addr, uint32_t metadata_in),
+         //prefetcher_final_stats(),
+         l1d_prefetcher_final_stats(),
+         l2c_prefetcher_final_stats(),
+         llc_prefetcher_final_stats();
+
+    uint32_t l2c_prefetcher_operate(uint64_t addr, uint64_t ip, uint8_t cache_hit, uint8_t type, uint32_t metadata_in),
+         llc_prefetcher_operate(uint64_t addr, uint64_t ip, uint8_t cache_hit, uint8_t type, uint32_t metadata_in),
+         l2c_prefetcher_cache_fill(uint64_t addr, uint32_t set, uint32_t way, uint8_t prefetch, uint64_t evicted_addr, uint32_t metadata_in),
+         llc_prefetcher_cache_fill(uint64_t addr, uint32_t set, uint32_t way, uint8_t prefetch, uint64_t evicted_addr, uint32_t metadata_in);
+    
+    uint32_t get_set(uint64_t address),
+             get_way(uint64_t address, uint32_t set),
+             find_victim(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type),
+             llc_find_victim(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type),
+             llc_find_victim_ceaser_s(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type,int part),
+             lru_victim(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type);
+
+             void shiftWQEntries(int index);
+             void check_inclusive();
+             bool make_inclusive(int cpu,int evict_cpu,CACHE &cache,uint64_t address,uint64_t instr_id);
+	     //Replacement Functions 
+	     int bfs(uint32_t set,int way);
+	     int relocation(int front);
+	     int empty_blocks();
+	     void copy_block(uint32_t oldset,int oldway,uint32_t newset,int newway);
+	     //	     int is_it_sampled(int cpu, uint32_t set);
+//	     int find_victim_original_set(int index);	  
+//	     void update_original_set(int index,int way,uint64_t tag);
+//	     void print_original_set(int index); 
+//	     void print_encrypted_set(int set);
+//	     S&P---------------------------------------
+	     int remap_block(uint32_t set, uint32_t way);
+	     int check_hit_for_remap_on_evictions(PACKET *packet, uint32_t * current_set);
+	     void llc_update_ceaser_s(uint32_t set, uint32_t way); // Only used in LRU 
+	     int rrpv_value(uint32_t set, uint32_t way);
+	     uint32_t remap_find_victim(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type,int part);
+	     //CEASER-S Functions 
+             uint64_t	getDecryptedAddress(uint32_t set, uint32_t way);
+             uint64_t   getEncryptedAddress(uint64_t address, uint32_t current_cpu, uint8_t* key, uint32_t add_latency);
+	     
+             uint64_t bitset42_to_uint64(bitset<42> b);
+             void check_llc_access();
+	     void remap_set_ceaser_s();
+	     void check_encryption_engine_for_queue_entries();
+             int call_make_inclusive(uint32_t set, uint32_t way);
+
+             void set_key(uint32_t set,uint32_t way);
+             uint32_t get_ceaser_set(uint64_t address),get_ceaser_s_set(uint64_t address);
+             int check_make_inclusive(CACHE &cache);
+             int check_llc_stall();
+	     void continue_remap();//If remap stall due to WQ occupncy. It  will be call in each cycle.
+	     void add_stall_cycle_to_queues();
+             void remap_llc_update_replacement_state(uint32_t oldset,uint32_t way,uint32_t newset,uint32_t newway,uint64_t tag);
+	//---------MAYA-------------
+	    void remove_tag_entry_from_block(uint32_t set,int way),fill_tag(int tag_number,int tag_set,int tag_way,uint64_t tag,uint32_t block_set,int block_way, bool hit);
+	    uint32_t random_way(),random_set(),get_tag_set(uint64_t address);
+	    int llc_find_victim_tag(uint32_t tag0_set,uint32_t tag1_set,int* tag_way),check_hit_tag(uint32_t tag0_set,uint32_t tag1_set,int* tag_way,uint64_t tag),remove_block_based_on_tag_array(int tag_number,int tag_set_number,int tag_way);
+
+};
+
+#endif

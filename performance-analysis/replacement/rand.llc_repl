@@ -1,0 +1,173 @@
+#include "cache.h"
+#include "ceaser.h"
+#define maxRRPV 3
+//uint32_t rrpv[LLC_SET][LLC_WAY]; //defined in cache.h bu Sujeet
+
+// initialize replacement state
+void CACHE::llc_initialize_replacement()
+{
+    cout << "Initialize SRRIP state" << endl;
+
+    for (int i=0; i<LLC_SET; i++) {
+        for (int j=0; j<LLC_WAY; j++) {
+            block[i][j].rrpv = maxRRPV;
+        }
+    }
+}
+
+// find replacement victim for CEASER_S
+uint32_t CACHE::llc_find_victim_ceaser_s(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type,int part)
+{
+    // look for the maxRRPV line
+    while (1)
+    {
+		/*if(all_warmup_complete > NUM_CPUS){
+        for (uint32_t way=(part * (NUM_WAY/partitions)); way<NUM_WAY && (way < ((part+1) * (NUM_WAY/partitions))) ; way++) 
+                cout<<block[set][way].rrpv<<" ";
+        cout<<"\n";
+          for (uint32_t way=(part * (NUM_WAY/partitions)); way<NUM_WAY && (way < ((part+1) * (NUM_WAY/partitions))) ; way++) 
+                cout<<block[set][way].valid<<" ";
+        cout<<"\n"; 
+	} */
+        for (uint32_t way=(part * (NUM_WAY/partitions)); way<NUM_WAY && (way < ((part+1) * (NUM_WAY/partitions))) ; way++)
+            if (block[set][way].rrpv == maxRRPV){
+	//	if( block[set][way].valid != 0)
+	//		cout<<block[set][way].valid<<" "<<"*************\n";
+		//cout<<"Way : "<<way<<"\n";
+                return way;
+		}
+           
+        for (uint32_t way=(part * (NUM_WAY/partitions)); way<NUM_WAY && (way < ((part+1) * (NUM_WAY/partitions))) ; way++) 
+            block[set][way].rrpv++;
+    }
+
+    // WE SHOULD NOT REACH HERE
+    assert(0);
+    return 0;
+}
+uint32_t CACHE::llc_find_victim(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type)
+{
+    // look for the maxRRPV line
+	return (rand()%16);
+/*    while (1)
+    {
+        for (int i=0; i<LLC_WAY; i++)
+            if (block[set][i].rrpv == maxRRPV)
+                return i;
+
+        for (int i=0; i<LLC_WAY; i++)
+            block[set][i].rrpv++;
+    }
+*/
+    // WE SHOULD NOT REACH HERE
+    assert(0);
+    return 0;
+}
+
+// find replacement victim for check_writeback_queue() function in ceaser code
+uint32_t CACHE::llc_find_victim_ceaser(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type, uint32_t newset_count)
+{
+	uint32_t rrpv_copy[LLC_WAY];
+	for(uint32_t i=0; i<LLC_WAY; i++)
+	{
+		rrpv_copy[i] = block[set][i].rrpv;
+	}
+    // look for the maxRRPV line
+	uint32_t victims_left_behind=0;
+    while (1)
+    {
+        for (int i=0; i<LLC_WAY; i++)
+            if (rrpv_copy[i] == maxRRPV)
+				if(victims_left_behind++ == newset_count)
+                	return i;
+
+        for (int i=0; i<LLC_WAY; i++)
+			if(rrpv_copy[i] != maxRRPV)
+            	rrpv_copy[i]++;
+    }
+
+    // WE SHOULD NOT REACH HERE
+    assert(0);
+    return 0;
+}
+/*uint32_t CACHE::llc_find_victim_ceaser_s_(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type, uint32_t newset_count,int part)
+{
+	uint32_t rrpv_copy[LLC_WAY];
+	for (uint32_t way=(part * (NUM_WAY/partitions)); way<NUM_WAY && (way < ((part+1) * (NUM_WAY/partitions))) ; way++)
+	{
+		rrpv_copy[way] = block[set][way].rrpv;
+	}
+    // look for the maxRRPV line
+	uint32_t victims_left_behind=0;
+    while (1)
+    {
+        for (uint32_t way=(part * (NUM_WAY/partitions)); way<NUM_WAY && (way < ((part+1) * (NUM_WAY/partitions))) ; way++)
+            if (rrpv_copy[way] == maxRRPV)
+				if(victims_left_behind++ == newset_count)
+                	return way;
+
+        for (uint32_t way=(part * (NUM_WAY/partitions)); way<NUM_WAY && (way < ((part+1) * (NUM_WAY/partitions))) ; way++)
+			if(rrpv_copy[way] != maxRRPV)
+            	rrpv_copy[way]++;
+    }
+
+    // WE SHOULD NOT REACH HERE
+    assert(0);
+    return 0;
+}*/
+
+
+void CACHE::ceaser_llc_update_replacement_state(uint32_t way,uint32_t newset,uint32_t newway)
+{
+		block[newset][newway].rrpv = block[Sptr][way].rrpv;
+		block[Sptr][way].rrpv=maxRRPV;
+}
+
+// called on every cache hit and cache fill
+void CACHE::llc_update_replacement_state(uint32_t cpu, uint32_t set, uint32_t way, uint64_t full_addr, uint64_t ip, uint64_t victim_addr, uint32_t type, uint8_t hit)
+{
+    string TYPE_NAME;
+    if (type == LOAD)
+        TYPE_NAME = "LOAD";
+    else if (type == RFO)
+        TYPE_NAME = "RFO";
+    else if (type == PREFETCH)
+        TYPE_NAME = "PF";
+    else if (type == WRITEBACK)
+        TYPE_NAME = "WB";
+    else
+        assert(0);
+
+    if (hit)
+        TYPE_NAME += "_HIT";
+    else
+        TYPE_NAME += "_MISS";
+
+    if ((type == WRITEBACK) && ip)
+        assert(0);
+
+    // uncomment this line to see the LLC accesses
+#ifdef LLC_PRINT
+  if(all_warmup_complete > NUM_CPUS){
+     cout << "CPU: " << cpu << "  "<<NAME <<" "<< setw(9) << TYPE_NAME << " set: " << setw(5) << set << " way: " << setw(2) << way;
+     cout << hex << " paddr: " << setw(12) << full_addr << " ip: " << setw(8) << ip << " victim_addr: " << victim_addr << dec << endl;
+  }
+#endif
+    if (hit)
+        block[set][way].rrpv = 0;
+    else
+        block[set][way].rrpv = maxRRPV-1;
+}
+
+// use this function to print out your own stats at the end of simulation
+void CACHE::llc_replacement_final_stats()
+{
+
+}
+void CACHE::remap_llc_update_replacement_state(uint32_t way,uint32_t newset,uint32_t newway,uint64_t tag)
+{
+}
+void CACHE::llc_update_ceaser_s(uint32_t set, uint32_t way)
+{
+}
+
