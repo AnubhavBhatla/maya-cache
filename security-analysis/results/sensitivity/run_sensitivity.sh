@@ -13,7 +13,7 @@ stdbuf -oL ../../bin/maya12Ways.o 6 ${NUM_BILLIONS} 42 \
 stdbuf -oL ../../bin/maya3Ways.o 6 ${NUM_BILLIONS} 42 \
        > raw_results/Base3.ExtraWays6.out &
 
-## Run Empirical Results for Reuse-Ways = 1,3,5,7
+## Run Empirical Results for Reuse-Ways = 1,5,7
 for reuse_ways_per_skew in 1 5 7
 do
     stdbuf -oL ../../bin/maya6Ways_${reuse_ways_per_skew}Reuse.o 6 ${NUM_BILLIONS} 42 \
@@ -31,3 +31,6 @@ done
 ##Generate Bucket_Probabilities
 ./get_bucket_prob_12wps.sh
 ./get_bucket_prob_3wps.sh
+./get_bucket_prob_1reuse.sh
+./get_bucket_prob_5reuse.sh
+./get_bucket_prob_7reuse.sh
