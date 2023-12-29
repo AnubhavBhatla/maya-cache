@@ -1,4 +1,4 @@
-# README
+
 <p align="center">
   <h1 align="center"> ChampSim </h1>
   <p> ChampSim is a trace-based simulator for a microarchitecture study. You can find more information about ChampSim here (https://github.com/ChampSim/ChampSim)     <p>
