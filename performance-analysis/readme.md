@@ -49,6 +49,7 @@ For more details please refer to build_champsim.sh
 
 # Run simulation
 To enable MAYA set macro MAYA in cache.h to 1  
+
 Execute `run_champsim.sh` with proper input arguments. <br>
 
 ```
