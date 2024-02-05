@@ -46,17 +46,17 @@ int CACHE::add_read_to_lower_level(uint32_t mshr_index,uint32_t read_index,uint3
 {
 	if (cache_type==IS_L2C)
     {	
-		//AB: get the slice number
+		//get the slice number
 		uint32_t slice_num = get_slice_num(MSHR.entry[mshr_index].address);
 		int insert_err =0;
 		//Check for the packet in lower level PQ
 		int pq_index = uncore.LLC[slice_num]->PQ.check_queue(&MSHR.entry[mshr_index]); 
 		if(pq_index != -1) //Packet is present
 		{	
-			//AB: direct path present or the interconnect is OFF
+			//direct path present or the interconnect is OFF
 			if (INTERCONNECT_ON == 0 || get_slice_num(RQ.entry[read_index].address) == read_cpu)
 			{	
-				//AB: insufficient space
+				//insufficient space
 				if ((this_router->LLC_MAP[get_slice_num(RQ.entry[read_index].address)])->get_occupancy(1,RQ.entry[read_index].address) == (this_router->LLC_MAP[get_slice_num(RQ.entry[read_index].address)])->get_size(1,RQ.entry[read_index].address))//lower_level rq is full
 				{
 					return -1;
@@ -70,9 +70,9 @@ int CACHE::add_read_to_lower_level(uint32_t mshr_index,uint32_t read_index,uint3
 			}
 			else
 			{
-				//AB: gets the direction for routing the packet
+				//gets the direction for routing the packet
 				int direction = get_direction(read_cpu,slice_num);
-				//AB: insufficient space
+				//insufficient space
 				if (this_router->NI[direction].OUTQ.occupancy == this_router->NI[direction].OUTQ.SIZE)
 				{
 					insert_err=-2;
@@ -127,14 +127,6 @@ void CACHE::remove_random_tag(int tag_number, int tag)
 		if (tag_number == 0) {
 			if (tag0[rand_set][rand_way].priority == 0 && tag0[rand_set][rand_way].valid == 1 && tag0[rand_set][rand_way].tag != tag) {
 				done = true;
-				/*
-				if (tag0[rand_set][rand_way].tag == 0x65a0) {
-					cout << "65a0 " << "Random Tag " << "Skew0 " << rand_set << " " << rand_way << endl;
-				}
-				if (tag0[rand_set][rand_way].tag == 1084953){
-					cout << "Tag removed! " << "Tag0" << " Priority : " << tag0[rand_set][rand_way].priority << endl;
-				}
-				*/
 				tag0[rand_set][rand_way].tag = 0;
 				tag0[rand_set][rand_way].valid = 0;
 				tag0[rand_set][rand_way].set = 0;
@@ -144,14 +136,6 @@ void CACHE::remove_random_tag(int tag_number, int tag)
 		else if (tag_number == 1) {
 			if (tag1[rand_set][rand_way].priority == 0 && tag1[rand_set][rand_way].valid == 1 && tag1[rand_set][rand_way].tag != tag) {
 				done = true;
-				/*
-				if (tag1[rand_set][rand_way].tag == 0x65a0) {
-					cout << "65a0 " << "Random Tag " << "Skew1 " << rand_set << " " << rand_way << endl;
-				}
-				if (tag1[rand_set][rand_way].tag == 1084953){
-					cout << "Tag removed! " << "Tag1" << " Priority : " << tag1[rand_set][rand_way].priority << endl;
-				}
-				*/
 				tag1[rand_set][rand_way].tag = 0;
 				tag1[rand_set][rand_way].valid = 0;
 				tag1[rand_set][rand_way].set = 0;
@@ -189,12 +173,7 @@ void CACHE::handle_fill() //Interconnect done
 			if (tag_number < 0) {
 				assert(tag_number == -1);
 				hit = false;
-				tag_number = llc_find_victim_tag(tag0_set,tag1_set,&tag_way); //AB: finds eviction candidate according to load-aware skew selection and 
-				/*
-				if (MSHR.entry[mshr_index].address == 1084953){
-					cout << "Tag found in FILL MISS!" << endl;
-				}
-				*/
+				tag_number = llc_find_victim_tag(tag0_set,tag1_set,&tag_way); //finds eviction candidate according to load-aware skew selection and 
 			}
 			else {
 				hit = true;
@@ -215,28 +194,18 @@ void CACHE::handle_fill() //Interconnect done
 					cout << "SAE Count : " << sae_count << endl;
 					assert(0);
 				}
-				/*
-				if (MSHR.entry[mshr_index].address == 1084953){
-					cout << "Tag found in FILL HIT! Valid : " << tag1[tag1_set][tag_way].valid << " Priority : " << tag1[tag1_set][tag_way].priority <<  endl;
-				}
-				if (MSHR.entry[mshr_index].instr_id == 385) {
-					cout << tag0[tag0_set][tag_way].valid << " " << tag1[tag1_set][tag_way].valid << " " << tag_number << endl;
-				}
-				*/
 			}
-			//Nav: Get random set and way for priority 0 tags
-			//Need to change this to return a random priority-0 tag entry
 			
 			set=random_set();
 			way=random_way();
 			
-			//AB: assigns the set corresponding to the assigned skew
+			//assigns the set corresponding to the assigned skew
 			if(tag_number == 0)
 				tag_set_number = tag0_set;
 			else
 				tag_set_number = tag1_set;
 
-			//AB: just to make sure these two variables always remain the same - assertions have been used later
+			//just to make sure these two variables always remain the same - assertions have been used later
 			
 			set1=set;
 			way1=way;
@@ -261,10 +230,6 @@ void CACHE::handle_fill() //Interconnect done
 		else
 		{
 			way = find_victim(fill_cpu, MSHR.entry[mshr_index].instr_id, set, block[set], MSHR.entry[mshr_index].ip, MSHR.entry[mshr_index].full_addr, MSHR.entry[mshr_index].type);
-			/*
-			if((cache_type == IS_DTLB) && MSHR.entry[mshr_index].instr_id == 1372)
-				cout << "Physical Address " << MSHR.entry[mshr_index].data << endl;
-			*/
 		}
  
 #ifdef LLC_BYPASS
@@ -283,8 +248,6 @@ void CACHE::handle_fill() //Interconnect done
 			cout << " victim_addr: " << block[set][way].tag << dec << endl; });
 		return;
 		}
-			//@Why update repl. state if no fill
-			// update replacement policy
 			if (cache_type == IS_LLC) {
 				llc_update_replacement_state(fill_cpu, set, way, MSHR.entry[mshr_index].full_addr, MSHR.entry[mshr_index].ip, 0, MSHR.entry[mshr_index].type, 0);
 			}
@@ -362,24 +325,19 @@ void CACHE::handle_fill() //Interconnect done
 if (block[set][way].dirty && hit) 
 	{
 		assert(block[set][way].valid == 1);
-		/*
-		if (block[set][way].valid == 0) {
-			cout << "Cache Type: " << (int)cache_type << " ID: " << MSHR.entry[mshr_index].instr_id << endl;
-			assert(false);
-		}
-		*/
+		
 			if (cache_type == IS_L2C) //L2C --> LLC slice can go either via network or without it[ when it is for connected LLC slice or if INTERCONNECT IS OFF]
 			{
-				//AB: INTERCONNECT is OFF or when it has a direct path to LLC slice
+				//INTERCONNECT is OFF or when it has a direct path to LLC slice
 				if (INTERCONNECT_ON == 0 || get_slice_num(block[set][way].tag) == this_router->id ) //Direct path
 				{
 					int destination_slice = get_slice_num(block[set][way].tag);
 					if (this_router->LLC_MAP[destination_slice]->get_occupancy(2, block[set][way].tag) == this_router->LLC_MAP[destination_slice]->get_size(2, block[set][way].tag)) 
 						{// lower level WQ is full, cannot replace this victim
 						do_fill = 0;
-						//AB: increment WQ_FULL count
+						//increment WQ_FULL count
 						this_router->LLC_MAP[destination_slice]->increment_WQ_FULL(block[set][way].tag);
-						//AB: increase number of stalls
+						//increase number of stalls
 						STALL[MSHR.entry[mshr_index].type]++;
 
 						DP ( if (warmup_complete[fill_cpu]) {
@@ -389,12 +347,12 @@ if (block[set][way].dirty && hit)
 						}
 					else
 						{	
-							//AB: create a writeback packet
+							//create a writeback packet
 							PACKET writeback_packet;
 							writeback_packet.fill_level = fill_level << 1;
 							writeback_packet.cpu = fill_cpu;
 							curr_addr=getDecryptedAddress(set,way);
-							//AB: invalid address
+							//invalid address
 							if(curr_addr==-1)
 								do_fill=0;
 							writeback_packet.address = curr_addr;
@@ -405,8 +363,8 @@ if (block[set][way].dirty && hit)
 							writeback_packet.ip = 0; // writeback does not have ip
 							writeback_packet.type = WRITEBACK;
 							writeback_packet.event_cycle = current_core_cycle[fill_cpu];
-							//AB: adds packet to the WQ
-							//AB: looks for the mapping of the slice in LLC
+							//adds packet to the WQ
+							//looks for the mapping of the slice in LLC
 				            if(do_fill==1)
 								this_router->LLC_MAP[destination_slice]->add_wq(&writeback_packet);
 						}
@@ -414,7 +372,7 @@ if (block[set][way].dirty && hit)
 				else //WB packet needs to go to network
 				{
 					int destination = get_slice_num(block[set][way].tag);
-					//AB: choose CW/ACW path depending on whichever is shorter (source, destination)
+					//choose CW/ACW path depending on whichever is shorter (source, destination)
 					int direction = get_direction(cpu,destination);
 					if (this_router->NI[direction].OUTQ.occupancy == this_router->NI[direction].OUTQ.SIZE) {
 						//Router Queue filled
@@ -442,9 +400,9 @@ if (block[set][way].dirty && hit)
 						writeback_packet.ip = 0; // writeback does not have ip
 						writeback_packet.type = WRITEBACK;
 						writeback_packet.event_cycle = current_core_cycle[fill_cpu];
-						//AB: this is different: not used in the packet for the previous case
+						//this is different: not used in the packet for the previous case
 						writeback_packet.forL2=0;
-						//AB: NI[0] connects with next CW router; NI[1] connects with next ACW router
+						//NI[0] connects with next CW router; NI[1] connects with next ACW router
 						if(do_fill==1)
 							this_router->NI[direction].add_outq(&writeback_packet);   
 					}       
@@ -452,9 +410,9 @@ if (block[set][way].dirty && hit)
 			}
 			else //For caches other than L2
 			{
-			//AB: lower_level is true if there is a cache level lower than the current level
+			//lower_level is true if there is a cache level lower than the current level
 			if (lower_level) {
-				//AB: lower level writeback queue is full
+				//lower level writeback queue is full
 				if (lower_level->get_occupancy(2, block[set][way].tag) == lower_level->get_size(2, block[set][way].tag)) {
 					// lower level WQ is full, cannot replace this victim
 					do_fill = 0;
@@ -467,7 +425,7 @@ if (block[set][way].dirty && hit)
 					cout << " victim_addr: " << block[set][way].tag << dec << endl; });
 				}
 				else {	
-					//AB: creates a writeback packet, adds it to the WQ and initiates fill
+					//creates a writeback packet, adds it to the WQ and initiates fill
 					PACKET writeback_packet;
 					writeback_packet.fill_level = fill_level << 1;
 					writeback_packet.cpu = fill_cpu;
@@ -482,7 +440,7 @@ if (block[set][way].dirty && hit)
 					writeback_packet.ip = 0; // writeback does not have ip
 					writeback_packet.type = WRITEBACK;
 					writeback_packet.event_cycle = current_core_cycle[fill_cpu];
-					//AB: adds to the WQ of the lower level
+					//adds to the WQ of the lower level
 					if(do_fill == 1)
 						lower_level->add_wq(&writeback_packet);
 				}
@@ -498,13 +456,13 @@ if (block[set][way].dirty && hit)
 			
 		}
 	} 	
-		//AB: a lot of data structures and stats are being updated
+		//a lot of data structures and stats are being updated
 		if (do_fill)
 		{
 			//This check is to determine before-hand if packet will get stuck in network queue and return without processing the packet or making any changes to other variables
 			if ( INTERCONNECT_ON && cache_type == IS_LLC && MSHR.entry[mshr_index].fill_level < fill_level && this_router->id!=fill_cpu)
 			{
-				//AB: path from router to fill_cpu
+				//path from router to fill_cpu
 				int direction = get_direction(this_router->id,fill_cpu);
 				if (this_router->NI[direction].OUTQ.occupancy == this_router->NI[direction].OUTQ.SIZE) 
 				{
@@ -528,7 +486,7 @@ if (block[set][way].dirty && hit)
 				MSHR.entry[mshr_index].pf_metadata = l2c_prefetcher_cache_fill(MSHR.entry[mshr_index].address<<LOG2_BLOCK_SIZE, set, way, (MSHR.entry[mshr_index].type == PREFETCH) ? 1 : 0,block[set][way].tag<<LOG2_BLOCK_SIZE, MSHR.entry[mshr_index].pf_metadata);
 			if (cache_type == IS_LLC)
 			{	
-				//AB: i don't understand the point of the changing the value of 'cpu'
+				//i don't understand the point of the changing the value of 'cpu'
 				cpu = fill_cpu;
 				MSHR.entry[mshr_index].pf_metadata = llc_prefetcher_cache_fill(MSHR.entry[mshr_index].address<<LOG2_BLOCK_SIZE, set, way, (MSHR.entry[mshr_index].type == PREFETCH) ? 1 : 0,block[set][way].tag<<LOG2_BLOCK_SIZE, MSHR.entry[mshr_index].pf_metadata);
 				cpu = 0;
@@ -553,19 +511,14 @@ if (block[set][way].dirty && hit)
 		
 			if(MAYA == 1 && cache_type == IS_LLC)
 			{	
-				//AB: invalidates the randomly generated entry from the block (data array) and tag (tag array)
+				//invalidates the randomly generated entry from the block (data array) and tag (tag array)
 				//
 				if (hit) {
-					//cout << "Tag Hit!" << " ID: " << MSHR.entry[mshr_index].instr_id << endl;
-					//AB: checks if the entry was indeed a priority 0 tag entry
+					//checks if the entry was indeed a priority 0 tag entry
 					assert((tag_number == 0 && tag0[tag_set_number][tag_way].priority == 0) || (tag_number == 1 && tag1[tag_set_number][tag_way].priority == 0));
-					//AB: invalidates the randomly generated entry from the block (data array) and tag (tag array)
-					//cout << "Valid: " << block[set][way].valid << endl;
+					//invalidates the randomly generated entry from the block (data array) and tag (tag array)
+
 					if(block[set][way].valid == 1){
-						//assert(block[set][way].tag_set != tag_set_number || block[set][way].tag_way != tag_way);
-						//cout << "Tag entry removed from block" << endl;
-						//cout << "Removed tag entry from block from handle_fill" << endl;
-						//cout << "Tag Set: " << tag_set_number << " Tag Way: " << tag_way << endl;
 						
 						if (block[set][way].cpu != MSHR.entry[mshr_index].cpu) {
 							interference_count++;
@@ -573,20 +526,9 @@ if (block[set][way].dirty && hit)
 						// cout << interference_count << endl;
 						remove_tag_entry_from_block(set,way);    //(block[set][way].tag_set,block[set][way].tag_way,block[set][way].tag);
 					}
-					/*
-					if (MSHR.entry[mshr_index].instr_id == 385)
-						cout << tag_set_number << " " << tag1_set << endl;
-					if (MSHR.entry[mshr_index].address == 0x65a0){
-						cout << "65a0 fill_tag from handle_fill-hit" << endl;
-					}
-					*/
 				
 					fill_tag(tag_number,tag_set_number,tag_way,MSHR.entry[mshr_index].address,set,way,true);
-					/*
-					if (set == 0x4c7 && way == 0){
-						//cout << "4c7 fill_cache from handle_fill-hit" << endl;
-					}
-					*/
+					
 					fill_cache(set, way, &MSHR.entry[mshr_index]);
 
 					assert(block[set][way].valid == 1);
@@ -612,21 +554,18 @@ if (block[set][way].dirty && hit)
 					num_pr0--;
 				}
 				else {
-					//AB: removing a random priority 0 tag if threshold is reached
+					//removing a random priority 0 tag if threshold is reached
 					if(num_pr0 >= threshold_pr0) {
-						//cout << "Random Tag Removed in handle_fill" << endl;
 						remove_random_tag(tag_number, MSHR.entry[mshr_index].address);
 						num_pr0--;
 					}
-					//AB: set-associative eviction - the empty entry suggested by load-aware selection is valid
+					//set-associative eviction - the empty entry suggested by load-aware selection is valid
 					if((tag_number == 0 && tag0[tag_set_number][tag_way].valid == 1) || (tag_number == 1 && tag1[tag_set_number][tag_way].valid == 1))
 					{	//N: Will have to make changes to accomodate for different priotiy of tag entries
 						assert(tag_number >= 0);
 						if (tag_number == 0) {
 							if (tag0[tag_set_number][tag_way].priority == 1) {
-								//cout << "Removed block based on tag array from handle_fill" << endl;
 								remove_block_based_on_tag_array(tag_number,tag_set_number,tag_way);
-								//cout<<"Remove Block based on tag array  tag_number : "<<tag_number<<" tag_set "<<tag_set_number<<" tag_way : "<<tag_way<<endl;
 							}
 							else if (tag0[tag_set_number][tag_way].priority == 0)
 							{
@@ -640,9 +579,7 @@ if (block[set][way].dirty && hit)
 						}
 						else if (tag_number == 1) {
 							if (tag1[tag_set_number][tag_way].priority == 1) {
-								//cout << "Removed block based on tag array from handle_fill" << endl;
 								remove_block_based_on_tag_array(tag_number,tag_set_number,tag_way);
-								//cout<<"Remove Block based on tag array  tag_number : "<<tag_number<<" tag_set "<<tag_set_number<<" tag_way : "<<tag_way<<endl;
 							}
 							else if (tag1[tag_set_number][tag_way].priority == 0)
 							{
@@ -655,12 +592,8 @@ if (block[set][way].dirty && hit)
 							}
 						}
 					}
-					//AB: adds new entry to the tag
-					/*
-					if (MSHR.entry[mshr_index].address == 0x65a0){
-						cout << "65a0 fill_tag from handle_fill-miss" << endl;
-					}
-					*/
+					//adds new entry to the tag
+
 					if (MSHR.entry[mshr_index].address == 1084953){
 						cout << "FILL" << endl;
 					}
@@ -676,11 +609,10 @@ if (block[set][way].dirty && hit)
 					num_pr0++;
 				}
 				
-				//cout<<"Fill_cache in Handle_Fill : set = "<<set<<" way : "<<way<<endl;
 				if(set1 != set && way1 != way)
 					assert(0);
 			}
-			//AB: gets block info from the packet and adds it to the cache
+			//gets block info from the packet and adds it to the cache
 			if(!(MAYA == 1 && cache_type == IS_LLC)){
 				if (block[set][way].cpu != MSHR.entry[mshr_index].cpu) {
 					interference_count++;
@@ -688,7 +620,6 @@ if (block[set][way].dirty && hit)
 				fill_cache(set, way, &MSHR.entry[mshr_index]);
 			}
 			
-			//AB: not sure what is happening here
 			// RFO marks cache line dirty
 			if (cache_type == IS_L1D) 
 			{
@@ -701,10 +632,10 @@ if (block[set][way].dirty && hit)
 			{
 				if (cache_type == IS_LLC) //LLC --> L2C, packet can go either via network or without it[ When requesting core is directly connected to LLC slice or if INTERCONNECT IS OFF]
 				{	
-					//AB: packet goes without using the network
+					//packet goes without using the network
 					if (INTERCONNECT_ON == 0 || this_router->id == fill_cpu )
 					{	
-						//AB: instruction
+						//instruction
 						if (MSHR.entry[mshr_index].instruction) 
 							upper_level_icache[fill_cpu]->return_data(&MSHR.entry[mshr_index]);
 						else // data
@@ -734,9 +665,9 @@ if (block[set][way].dirty && hit)
 						}    
 					}
 				}
-				else //AB: not sure data is going from where to where
+				else //not sure data is going from where to where
 				{	
-					//AB: instruction
+					//instruction
 					if (MSHR.entry[mshr_index].instruction) 
 						upper_level_icache[fill_cpu]->return_data(&MSHR.entry[mshr_index]);
 					else // data
@@ -752,7 +683,6 @@ if (block[set][way].dirty && hit)
 			}
 			else if (cache_type == IS_DTLB) {
 				MSHR.entry[mshr_index].data_pa = block[set][way].data;
-				//cout << "MSHR PA: " << block[set][way].data << " Data: " << MSHR.entry[mshr_index].data << " ID: " << MSHR.entry[mshr_index].instr_id << endl;
 				if (PROCESSED.occupancy < PROCESSED.SIZE)
 					PROCESSED.add_queue(&MSHR.entry[mshr_index]);
 			}
@@ -760,7 +690,6 @@ if (block[set][way].dirty && hit)
 				if (PROCESSED.occupancy < PROCESSED.SIZE)
 					PROCESSED.add_queue(&MSHR.entry[mshr_index]);
 			}
-			//else if (cache_type == IS_L1D) {
 			else if ((cache_type == IS_L1D) && (MSHR.entry[mshr_index].type != PREFETCH)) {
 				if (PROCESSED.occupancy < PROCESSED.SIZE)
 					PROCESSED.add_queue(&MSHR.entry[mshr_index]);
@@ -793,7 +722,7 @@ if (block[set][way].dirty && hit)
 	
 			update_fill_cycle();
 			
-			//AB: for CEASER
+			//for CEASER
 			#if remap_on_evictions
 				if(is_valid_block_evicted == 1)
 				{
@@ -804,8 +733,6 @@ if (block[set][way].dirty && hit)
 			#if !(remap_on_evictions)
 					check_llc_access(); //Increment the number of llc accesses by one  
 			#endif
-			//if(cache_type == IS_LLC)
-			//cout<<" ------Handle_fill ends ---------"<<endl;
 		}
 	}
 }
@@ -828,14 +755,12 @@ void CACHE::handle_writeback() //Interconnect done
 		if(MAYA == 1 && cache_type == IS_LLC)
         {
 			get_tag_set(WQ.entry[index].address); //sets tag0 and tag1 set number
-			//cout<<" WB address : "<<WQ.entry[index].address<<endl;
 			tag_number = check_hit_tag(tag0_set,tag1_set,&tag_way,WQ.entry[index].address); //return tag_number and sets tag_way
-			//cout<<"tag_number  : "<<tag_number<<endl;
 			if(tag_number >= 0)    //gets a hit
 			{	
 				//cout<<"-------MAYA : Handle_WB Starts-------"<<endl;
 				
-				//AB: set the corresponding set and way
+				//set the corresponding set and way
                 if(tag_number == 0)
 				{	
 					tag_set_number = tag0_set;
@@ -843,61 +768,30 @@ void CACHE::handle_writeback() //Interconnect done
 					//assert(tag0[tag_set_number][tag_way].priority == 1);
 					set = tag0[tag_set_number][tag_way].set; 
 					way = tag0[tag_set_number][tag_way].way;
-					//cout<<"Set : "<<set<<" way : "<<way<<" tag : "<<block[set][way].tag<<" tag0[tag_set_number][tag_way].tag : "<<tag0[tag_set_number][tag_way].tag<<" WQ Tag "<<WQ.entry[index].address<<endl;
-					//cout<<" Block Valid bit :"<<block[set][way].valid<<"block[set][way].tag_number"<<block[set][way].tag_number<<" block[set][way].tag_set " <<block[set][way].tag_set<<" block[set][way].tag_way "<<block[set][way].tag_way<<endl;
-					// if(tag0[tag_set_number][tag_way].tag != WQ.entry[index].address || block[set][way].tag != tag0[tag_set_number][tag_way].tag  )
-                    //     assert(0);
 					assert(tag0[tag_set_number][tag_way].tag == WQ.entry[index].address);
-					/*
-					if (WQ.entry[index].address == 1084953){
-						cout << "Tag found in WRITEBACK HIT! Tag0 Priority : " << tag0[tag_set_number][tag_way].priority << endl;
-					}
-					*/
 					if (tag0[tag_set_number][tag_way].priority == 0) {
-						//AB: this means that the entry is a priority 0 entry and already resides in the tag array - no need for load-aware skew selection!
+						//this means that the entry is a priority 0 entry and already resides in the tag array - no need for load-aware skew selection!
 						way = -2;
 						tag_entry_type = -2;
-						//cout << "Writeback Miss with Priority 0 in Skew 0" << endl;
 					}
 					else{
 						assert(block[set][way].valid == 1);
-						/*
-						if (block[set][way].tag == 1084953){
-							cout << "Block found! Tag0" << endl;
-						}
-						*/
 					}
 				}
                 else if (tag_number == 1)
 				{
                     tag_set_number = tag1_set;
 					assert(tag1[tag_set_number][tag_way].valid == 1);
-					//assert(tag1[tag_set_number][tag_way].priority == 1);
 					set = tag1[tag_set_number][tag_way].set; 
 					way = tag1[tag_set_number][tag_way].way;
-					//cout<<"Set : "<<set<<" way : "<<way<<" tag : "<<block[set][way].tag<<" tag_set_number "<<tag_set_number<<" tag_way_number : "<<tag_way_number<<" tag1[tag_set_number][tag_way].tag : "<<tag1[tag_set_number][tag_way].tag<<" WQ Tag "<<WQ.entry[index].address<<endl;
-                                        //cout<<" Block Valid bit :"<<block[set][way].valid<<"block[set][way].tag_number"<<block[set][way].tag_number<<" block[set][way].tag_set " <<block[set][way].tag_set<<" block[set][way].tag_way "<<block[set][way].tag_way<<endl;
-					// if(tag1[tag_set_number][tag_way].tag != WQ.entry[index].address || block[set][way].tag != tag1[tag_set_number][tag_way].tag )
-					// 	assert(0);
 					assert(tag1[tag_set_number][tag_way].tag == WQ.entry[index].address);
-					/*
-					if (WQ.entry[index].address == 1084953){
-						cout << "Tag found in WRITEBACK HIT! Tag1 Priority : " << tag1[tag_set_number][tag_way].priority << endl;
-					}
-					*/
 					if (tag1[tag_set_number][tag_way].priority == 0) {
-						//AB: this means that the entry is a priority 0 entry and already resides in the tag array - no need for load-aware skew selection!
+						//this means that the entry is a priority 0 entry and already resides in the tag array - no need for load-aware skew selection!
 						way = -2;
 						tag_entry_type = -2;
-						//cout << "Writeback Miss with Priority 0 in Skew 1" << endl;
 					}
 					else{
 						assert(block[set][way].valid == 1);
-						/*
-						if (block[set][way].tag == 1084953){
-							cout << "Block found! Tag1" << endl;
-						}
-						*/
 					}
 
 				}
@@ -905,11 +799,6 @@ void CACHE::handle_writeback() //Interconnect done
 			else {
 				way = -1;
 				tag_entry_type = -1;
-				/*
-				if (WQ.entry[index].address == 1084953){
-					cout << "Tag found in WRITEBACK MISS!" << endl;
-				}
-				*/
 			}
         }
 
@@ -929,7 +818,6 @@ void CACHE::handle_writeback() //Interconnect done
                                 way = check_hit_for_remap_on_evictions(&WQ.entry[index], &current_set);
                                 if(way != -1) 
 					set = current_set;
-			//	cout << "gotten set: " << set << endl;
                          }
                 #endif
 		if (way >= 0) { // writeback hit (or RFO hit for L1D)
@@ -1032,7 +920,7 @@ void CACHE::handle_writeback() //Interconnect done
 			cout << " full_addr: " << WQ.entry[index].full_addr << dec;
 			cout << " cycle: " << WQ.entry[index].event_cycle << endl; });
 
-			//AB: Read for Ownership Request
+			//Read for Ownership Request
 			if (cache_type == IS_L1D) { // RFO miss
 				// check mshr
 				uint8_t miss_handled = 1;
@@ -1112,12 +1000,10 @@ void CACHE::handle_writeback() //Interconnect done
 			}
 			else {
 				// find victim
-				//uint32_t way;
 			 	if(cache_type == IS_LLC) 
 			 	{
 					if(MAYA == 1 && cache_type == IS_LLC)
 					{
-					//cout<<"Handle Writeback : "<<endl;
 						get_tag_set(WQ.entry[index].address); //sets tag0 and tag1 set number
 						
 						if (tag_entry_type == -1){
@@ -1126,11 +1012,6 @@ void CACHE::handle_writeback() //Interconnect done
 						else if (tag_entry_type == -2){
 							tag_number = check_hit_tag(tag0_set,tag1_set,&tag_way,WQ.entry[index].address); //return tag_number and sets tag_way
 							assert(tag_number >= 0);
-							/*
-							if (WQ.entry[index].address == 1084953){
-								cout << "Tag found in WRITEBACK MISS VICTIM! Tag" << tag_number << endl;
-							}
-							*/
 						}
 						else	
 							assert(0);
@@ -1151,8 +1032,6 @@ void CACHE::handle_writeback() //Interconnect done
 							assert((tag0[tag_set_number][tag_way].priority == 0 && tag_number == 0) || (tag1[tag_set_number][tag_way].priority == 0 && tag_number == 1));
 						}
 						
-					//cout<<"tag_number : "<<tag_number<<" tag_set_number : "<<tag_set_number<<"tag_way_number : "<<tag_way<<endl;
-								//cout<<"set : "<<set<<" way : "<<way<<endl;
 					}
 					else if(CEASER_S_LLC == 1 && cache_type == IS_LLC)
 					{
@@ -1187,12 +1066,12 @@ void CACHE::handle_writeback() //Interconnect done
 						assert(0);
 					}
 					if (cache_type == IS_L2C) 
-						{	//AB: direct connection or Interconnect is OFF
+						{	//direct connection or Interconnect is OFF
 							if (INTERCONNECT_ON  ==0 || get_slice_num(block[set][way].tag) == this_router->id )
 							{
-								//AB: get the destination
+								//get the destination
 							   int destination_slice = get_slice_num(block[set][way].tag);
-							   //AB: insufficient space
+							   //insufficient space
 							   if (this_router->LLC_MAP[destination_slice]->get_occupancy(2, block[set][way].tag) == this_router->LLC_MAP[destination_slice]->get_size(2, block[set][way].tag)) 
 							   {
 									// lower level WQ is full, cannot replace this victim
@@ -1205,7 +1084,7 @@ void CACHE::handle_writeback() //Interconnect done
 									cout << " lower level wq is full!" << " fill_addr: " << hex << WQ.entry[index].address;
 									cout << " victim_addr: " << block[set][way].tag << dec << endl; });
 								}
-								//AB: generate a writeback packet
+								//generate a writeback packet
 								else
 								{	
 									PACKET writeback_packet;
@@ -1230,9 +1109,9 @@ void CACHE::handle_writeback() //Interconnect done
 							{
 								//WB packet need to go to network     
 								int destination = get_slice_num(block[set][way].tag);
-								//AB: decides the direction taken for routing the packet
+								//decides the direction taken for routing the packet
 								int direction = get_direction(cpu,destination);
-								//AB: insufficient space
+								//insufficient space
 								if (this_router->NI[direction].OUTQ.occupancy == this_router->NI[direction].OUTQ.SIZE) 
 								{
 									// Network Interface queue is full, cannot add this victim to 
@@ -1244,7 +1123,7 @@ void CACHE::handle_writeback() //Interconnect done
 									cout << " Router queue is full!" << " fill_addr: " << hex << WQ.entry[index].address;
 									cout << " victim_addr: " << block[set][way].tag << dec << endl; });
 								}
-								//AB: generate a writeback packet
+								//generate a writeback packet
 								else 
 								{
 									PACKET writeback_packet;
@@ -1363,7 +1242,6 @@ void CACHE::handle_writeback() //Interconnect done
 					if(MAYA == 1 && cache_type == IS_LLC)
 					{
 						if(block[set][way].valid == 1) {
-							//cout << "Removed tag entry from block from handle_writeback" << endl;
 							
 							if (block[set][way].cpu != WQ.entry[index].cpu) {
 								interference_count++;
@@ -1371,37 +1249,17 @@ void CACHE::handle_writeback() //Interconnect done
 							remove_tag_entry_from_block(set,way);
 						}
 						if(num_pr0 >= threshold_pr0) {
-							//cout << "Random Tag Removed in handle_fill" << endl;
 							remove_random_tag(tag_number, WQ.entry[index].address);
 							num_pr0--;
 						}
 						
-						//AB: SAE
-						// if((tag_number == 0 && tag0[tag_set_number][tag_way].valid == 1) || (tag_number == 1 && tag1[tag_set_number][tag_way].valid == 1)) {
-						// 	if (tag_number == 0) {
-						// 		if (tag0[tag_set_number][tag_way].priority == 1) {
-						// 			//cout << "Removed block based on tag array from handle_writeback" << endl;
-						// 			remove_block_based_on_tag_array(tag_number,tag_set_number,tag_way);
-						// 		}
-						// 	}
-						// 	else if (tag_number == 1) {
-						// 		if (tag1[tag_set_number][tag_way].priority == 1) {
-						// 			//cout << "Removed block based on tag array from handle_writeback" << endl;
-						// 			remove_block_based_on_tag_array(tag_number,tag_set_number,tag_way);
-						// 		}
-						// 	}
-						// 	//fill_tag(tag_set_number,tag_way,&MSHR.entry[mshr_index]);
-						// }
-						
-						//AB: set-associative eviction - the empty entry suggested by load-aware selection is valid
+						//set-associative eviction - the empty entry suggested by load-aware selection is valid
 						if((tag_entry_type == -1) && ((tag_number == 0 && tag0[tag_set_number][tag_way].valid == 1) || (tag_number == 1 && tag1[tag_set_number][tag_way].valid == 1)))
-						{	//N: Will have to make changes to accomodate for different priotiy of tag entries
+						{	//Will have to make changes to accomodate for different priotiy of tag entries
 							assert(tag_number >= 0);
 							if (tag_number == 0) {
 								if (tag0[tag_set_number][tag_way].priority == 1) {
-									//cout << "Removed block based on tag array from handle_fill" << endl;
 									remove_block_based_on_tag_array(tag_number,tag_set_number,tag_way);
-									//cout<<"Remove Block based on tag array  tag_number : "<<tag_number<<" tag_set "<<tag_set_number<<" tag_way : "<<tag_way<<endl;
 								}
 								else if (tag0[tag_set_number][tag_way].priority == 0)
 								{
@@ -1411,14 +1269,11 @@ void CACHE::handle_writeback() //Interconnect done
 									tag0[tag_set_number][tag_way].priority = -1;
 									if (tag_entry_type == -1)
 										sae_count++;
-									//num_pr0--;
 								}
 							}
 							else if (tag_number == 1) {
 								if (tag1[tag_set_number][tag_way].priority == 1) {
-									//cout << "Removed block based on tag array from handle_fill" << endl;
 									remove_block_based_on_tag_array(tag_number,tag_set_number,tag_way);
-									//cout<<"Remove Block based on tag array  tag_number : "<<tag_number<<" tag_set "<<tag_set_number<<" tag_way : "<<tag_way<<endl;
 								}
 								else if (tag1[tag_set_number][tag_way].priority == 0)
 								{
@@ -1428,35 +1283,11 @@ void CACHE::handle_writeback() //Interconnect done
 									tag1[tag_set_number][tag_way].priority = -1;
 									if (tag_entry_type == -1)
 										sae_count++;
-									//num_pr0--;
 								}
 							}
 						}
-						/*
-						if (WQ.entry[index].address == 0x65a0){
-							cout << "65a0 fill_tag from handle_writeback-miss" << endl;
-						}
-						if (WQ.entry[index].address == 1084953){
-							cout << "WRITEBACK" << endl;
-						}
-						*/
 						
 						fill_tag(tag_number,tag_set_number,tag_way,WQ.entry[index].address,set,way,true);
-						
-						/*
-						if (tag0[tag_set_number][tag_way].tag == 1084953){
-							cout << "Tag found in WRITEBACK MISS! Tag0 Valid : " << tag0[tag_set_number][tag_way].valid << endl;
-						}
-						if (tag1[tag_set_number][tag_way].tag == 1084953){
-							cout << "Tag found in WRITEBACK MISS! Tag1 Valid : " << tag1[tag_set_number][tag_way].valid << endl;
-						}
-						if (tag0[tag_set_number][tag_way].tag == 1084953){
-							cout << "Tag found in WRITEBACK MISS! Tag0 Priority : " << tag0[tag_set_number][tag_way].priority << endl;
-						}
-						if (tag1[tag_set_number][tag_way].tag == 1084953){
-							cout << "Tag found in WRITEBACK MISS! Tag1 Priority : " << tag1[tag_set_number][tag_way].priority << endl;
-						}
-						*/
 
 						if(tag_number == 0) {
 							assert(tag0[tag_set_number][tag_way].valid == 1);
@@ -1470,11 +1301,6 @@ void CACHE::handle_writeback() //Interconnect done
 							num_pr0--;
 						}
 					}
-					/*
-					if (set == 0x4c7 && way == 0){
-						cout << "4c7 fill_cache from handle_writeback-miss" << endl;
-					}
-					*/
 
 					if (!MAYA && cache_type == IS_LLC) {
 						if (block[set][way].cpu != WQ.entry[index].cpu) {
@@ -1482,15 +1308,6 @@ void CACHE::handle_writeback() //Interconnect done
 						}
 					}
 					fill_cache(set, way, &WQ.entry[index]);
-					/*
-					assert(block[set][way].valid == 1);
-					if (tag_number == 0) {
-						assert(block[set][way].tag == tag0[tag_set_number][tag_way].tag);
-					}
-					else if (tag_number == 1) {
-						assert(block[set][way].tag == tag1[tag_set_number][tag_way].tag);
-					}
-					*/
 
 					// mark dirty
 					block[set][way].dirty = 1;
@@ -1503,7 +1320,7 @@ void CACHE::handle_writeback() //Interconnect done
 						{
 							if (INTERCONNECT_ON == 0 || this_router->id == writeback_cpu)
 							{
-								if (WQ.entry[index].instruction) //AB: instruction
+								if (WQ.entry[index].instruction) //instruction
 	 								upper_level_icache[writeback_cpu]->return_data(&WQ.entry[index]);
 								else // data
 									upper_level_dcache[writeback_cpu]->return_data(&WQ.entry[index]);							
@@ -1514,7 +1331,6 @@ void CACHE::handle_writeback() //Interconnect done
 								if (this_router->NI[direction].OUTQ.occupancy == this_router->NI[direction].OUTQ.SIZE) 
 								{
 									//Dead Code. if queue was filled then do_fill ==0 and we were not here
-									//What all need to be done when router queue is filled ?
 									STALL[WQ.entry[index].type]++;
 
 									DP ( if (warmup_complete[writeback_cpu]) {
@@ -1557,8 +1373,6 @@ void CACHE::handle_writeback() //Interconnect done
 			}
 		}
 	}
-	//if(cache_type == IS_LLC && MAYA == 1)
-	//	cout<<"-------MAYA : Handle_WB ENDS-------"<<endl;
 
 }
 
@@ -1567,14 +1381,14 @@ void CACHE::handle_read()
 	// handle read
 	for (uint32_t i=0; i<MAX_READ; i++)
 	{	
-		//AB: get info from RQ entry
+		//get info from RQ entry
 		uint32_t read_cpu = RQ.entry[RQ.head].cpu;
 	  	if(read_cpu == NUM_CPUS)
 			return;
 		// handle the oldest entry
 		if ((RQ.entry[RQ.head].event_cycle <= current_core_cycle[read_cpu]) && (RQ.occupancy > 0))
 		{	
-			//AB: get the required RQ entry
+			//get the required RQ entry
 			int index = RQ.head;
 			unsigned long long cycle_enqued_at_head=RQ.entry[index].cycle_enqueued;		
 			uint32_t set = get_set(RQ.entry[index].address);
@@ -1593,16 +1407,7 @@ void CACHE::handle_read()
 						tag_set_number = tag0_set;
 						assert(tag0[tag_set_number][tag_way].valid == 1);
 						if (tag0[tag_set_number][tag_way].priority == 0) {
-							//tag0[tag_set_number][tag_way].priority = 1;
-							//set = random_set();
-							//way = random_way();
-							//remove_tag_entry_from_block(set, way);
 							way = -1;
-							/*
-							if (tag0[tag_set_number][tag_way].tag == 1084953){
-								cout << "Tag found in READ HIT! Tag0" << endl;
-							}
-							*/
 						}
 						else if(tag0[tag_set_number][tag_way].priority == 1){
 							set = tag0[tag_set_number][tag_way].set;
@@ -1610,33 +1415,14 @@ void CACHE::handle_read()
 							if(block[set][way].tag != tag0[tag_set_number][tag_way].tag || block[set][way].tag != RQ.entry[index].address )
 								assert(0);
 							assert(block[set][way].valid == 1);
-							/*
-							if (block[set][way].tag == 1084953){
-								cout << "Block found in READ HIT! Tag0" << endl;
-							}
-							*/
 						}
 					}
 					else
 					{	
 						tag_set_number = tag1_set;
 						assert(tag1[tag_set_number][tag_way].valid == 1);
-						/*
-						if (tag_set_number == 1635 && tag_way == 1 && tag1[tag_set_number][tag_way].tag == 1084953){
-							cout << "Tag found in READ HIT! : Tag Priority " << tag1[tag_set_number][tag_way].priority << endl;
-						}
-						*/
 						if (tag1[tag_set_number][tag_way].priority == 0) {
-							//tag0[tag_set_number][tag_way].priority = 1;
-							//set = random_set();
-							//way = random_way();
-							//remove_tag_entry_from_block(set, way);
 							way = -1;
-							/*
-							if (tag1[tag_set_number][tag_way].tag == 1084953){
-								cout << "Tag found in READ HIT! Tag1" << endl;
-							}
-							*/
 						}
 						else if(tag1[tag_set_number][tag_way].priority == 1){
 							set = tag1[tag_set_number][tag_way].set;
@@ -1644,21 +1430,11 @@ void CACHE::handle_read()
 							if(block[set][way].tag != tag1[tag_set_number][tag_way].tag || block[set][way].tag != RQ.entry[index].address )
 								assert(0);
 							assert(block[set][way].valid == 1);
-							/*
-							if (block[set][way].tag == 1084953){
-								cout << "Block found in READ HIT! Tag1" << endl;
-							}
-							*/
 						}
 					}
 				}
 				else {
 					assert(tag_number == -1);
-					/*
-					if (RQ.entry[index].address == 1084953){
-						cout << "Tag found in READ MISS! " << endl;
-					}
-					*/
 					way = -1;
 				}
 			}
@@ -1677,7 +1453,6 @@ void CACHE::handle_read()
 				way = check_hit_for_remap_on_evictions(&RQ.entry[index],  &current_set);
 				if(way != -1)
 					set = current_set;
-				//cout << "gotten set: " << set << endl;
 			 }
 			#endif
 			if (way >= 0) // read hit
@@ -1791,11 +1566,11 @@ void CACHE::handle_read()
 
 				// update prefetch stats and reset prefetch bit
 				if (block[set][way].prefetch) {
-					//AB: prefetching the block proved useful
+					//prefetching the block proved useful
 					pf_useful++;
 					block[set][way].prefetch = 0;
 				}
-				//AB: not a dead block
+				//not a dead block
 				block[set][way].used = 1;
 
 				HIT[RQ.entry[index].type]++;
@@ -1808,7 +1583,7 @@ void CACHE::handle_read()
 					total_read_packets[RQ.entry[index].cpu]++;
 				}
 				RQ.remove_queue(&RQ.entry[index]);
-				//AB: value must be positive for a read to be successful in a cycle
+				//value must be positive for a read to be successful in a cycle
 				reads_available_this_cycle--;
 				#if !(remap_on_evictions)
 					check_llc_access(); 
@@ -1832,7 +1607,7 @@ void CACHE::handle_read()
 					{
 						int destination_slice = get_slice_num(RQ.entry[index].address);
 						int direction = get_direction(read_cpu,destination_slice);
-						//AB: block needs to brought in from another cpu and the router has run out of space
+						//block needs to brought in from another cpu and the router has run out of space
 						if (destination_slice != read_cpu && this_router->NI[direction].OUTQ.occupancy == this_router->NI[direction].OUTQ.SIZE)
 						{
 							//Router Queue filled
@@ -1853,55 +1628,49 @@ void CACHE::handle_read()
 						  // check to make sure the DRAM RQ has room for this LLC read miss
 						if (lower_level->get_occupancy(1, RQ.entry[index].address) == lower_level->get_size(1, RQ.entry[index].address))
 						{	
-							//AB: miss cannot be handled due to lack of space in RQ
+							//miss cannot be handled due to lack of space in RQ
 							miss_handled = 0;
 						}
 						else
 						{       
 							//newly_added 
-							//AB: add entry to the MSHR
+							//add entry to the MSHR
 							add_mshr(&RQ.entry[index]);
-							//AB: adds entry to the RQ of lower level - NOT SURE WHAT LOWER LEVEL MEANS HERE
+							//adds entry to the RQ of lower level
 							if(lower_level)
 							{	
-								//printf("handle_read: read miss; not in MSHR; LLC ");
-								//printf("dummy");
 								lower_level->add_rq(&RQ.entry[index]);
 							}
 						}
 					}
 					else
 					{
-						//AB: not sure what this is used for
 						int insert_err = 0;
 							
 					  	// add it to the next level's read queue
 						if (cache_type==IS_L2C)
 						{
-							//AB: get the destination for the
+							//get the destination for the
 							int destination = get_slice_num(RQ.entry[index].address);
 							
-							//AB: direct path or interconnect OFF
+							//direct path or interconnect OFF
 							if (INTERCONNECT_ON == 0 || get_slice_num(RQ.entry[index].address) == read_cpu )
 							{	
-								//AB: insufficient spaace in RQ
+								//insufficient spaace in RQ
 								if ((this_router->LLC_MAP[get_slice_num(RQ.entry[index].address)])->get_occupancy(1,RQ.entry[index].address) == (this_router->LLC_MAP[get_slice_num(RQ.entry[index].address)])->get_size(1,RQ.entry[index].address))
 								{
 									miss_handled=0;
 								}
 								else{
-									//AB: add entry to the MSHR
+									//add entry to the MSHR
 									add_mshr(&RQ.entry[index]);
-									//printf("handle_read: read miss; not in MSHR; L2C ");
-									//printf("dummy");
 									insert_err = (this_router->LLC_MAP[get_slice_num(RQ.entry[index].address)])->add_rq(&RQ.entry[index]);
 								}
 							}	
 							else
 							{
-								//int destination = get_slice_num(RQ.entry[index].address);
 								int direction = get_direction(read_cpu,destination);
-								//AB: miss cannot be handled
+								//miss cannot be handled
 								if (this_router->NI[direction].OUTQ.occupancy == this_router->NI[direction].OUTQ.SIZE) {
 									insert_err=-2;
 									miss_handled=0;
@@ -1913,7 +1682,7 @@ void CACHE::handle_read()
 									cout << " Router queue filled!" << " fill_addr: " << hex << RQ.entry[index].address;});
 								}
 								else{
-									//AB: miss is handled
+									//miss is handled
 									add_mshr(&RQ.entry[index]);
 									RQ.entry[index].forL2=0;
 									insert_err = this_router->NI[direction].add_outq(&RQ.entry[index]);   
@@ -1926,8 +1695,6 @@ void CACHE::handle_read()
 							// add it to mshr (read miss)
 							add_mshr(&RQ.entry[index]);
 							if (lower_level) {
-								//printf("handle_read: read miss; not in MSHR; not L2C ");
-								//printf("dummy");
 								lower_level->add_rq(&RQ.entry[index]);
 							}
 							else
@@ -1955,77 +1722,73 @@ void CACHE::handle_read()
 					}
 					else if (mshr_index != -1) { // already in-flight miss
 						// mark merged consumer
-						//AB: not sure what's  here
-						//AB: HELP!!!!!!!!!!!!!!!!!!!!!!!!!!
-						//AB: they have used the LB, STB, and MSHR in a read operation?????
-						//AB: RQ entry is a Read for Ownership
+						//RQ entry is a Read for Ownership
 						if (RQ.entry[index].type == RFO)
 						{
-							if (RQ.entry[index].tlb_access) { //AB: read requires a TLB access here?
-								//AB: gets the store queue index of the block
-								//AB: why are we dealing with the Store Buffer in the 'handle_read' function?
+							if (RQ.entry[index].tlb_access) {
+								//gets the store queue index of the block
 								uint32_t sq_index = RQ.entry[index].sq_index;
-								//AB: merges the store?
-								/*AB: 
+								
+								/*
 								Store Buffer (STB) has merging capabilities. If a previous write access has updated an entry, 
 								other write accesses on the same doubleword can merge into this entry. Merging is only possible
 								for stores to Normal memory.
 								*/
-								//AB: denotes that this SQ entry has been merged with another entry already present in the MSHR
+								//denotes that this SQ entry has been merged with another entry already present in the MSHR
 								MSHR.entry[mshr_index].store_merged = 1;
-								//AB: list of all SQ indices dependent on this one. Add this RQ entry to that list
+								//list of all SQ indices dependent on this one. Add this RQ entry to that list
 								MSHR.entry[mshr_index].sq_index_depend_on_me.insert(sq_index);
-								//AB: appends the already dependency list of the RQ entry to that of the MSHR entry since the RQ entry is now merged with the MSHR entry
+								//appends the already dependency list of the RQ entry to that of the MSHR entry since the RQ entry is now merged with the MSHR entry
 								MSHR.entry[mshr_index].sq_index_depend_on_me.join(RQ.entry[index].sq_index_depend_on_me, SQ_SIZE);
 							}
-							//AB: this RQ entry has already been load merged with the entry in the MSHR
+							//this RQ entry has already been load merged with the entry in the MSHR
 							if (RQ.entry[index].load_merged) {
 								//uint32_t lq_index = RQ.entry[index].lq_index;
 								MSHR.entry[mshr_index].load_merged = 1;
 								//MSHR.entry[mshr_index].lq_index_depend_on_me[lq_index] = 1;
-								//AB: combine the dependency lists
+								//combine the dependency lists
 								MSHR.entry[mshr_index].lq_index_depend_on_me.join(RQ.entry[index].lq_index_depend_on_me, LQ_SIZE);
 							}
 						}
 						else
 						{	
-							//AB: reading an instruction
+							//reading an instruction
 							if (RQ.entry[index].instruction) 
 							{	
-								//AB: gets the ROB index of the RQ entry
+								//gets the ROB index of the RQ entry
 								uint32_t rob_index = RQ.entry[index].rob_index;
-								//AB: merges this instruction read request with the MSHR entry
+								//merges this instruction read request with the MSHR entry
 								MSHR.entry[mshr_index].instr_merged = 1;
-								//AB: adds it to the dependency list of the MSHR entry
+								//adds it to the dependency list of the MSHR entry
 								MSHR.entry[mshr_index].rob_index_depend_on_me.insert(rob_index);
 
 								DP (if (warmup_complete[MSHR.entry[mshr_index].cpu]) {
 								cout << "[INSTR_MERGED] " << __func__ << " cpu: " << MSHR.entry[mshr_index].cpu << " instr_id: " << MSHR.entry[mshr_index].instr_id;
 								cout << " merged rob_index: " << rob_index << " instr_id: " << RQ.entry[index].instr_id << endl; });
 								
-								//AB: if some entries were already merged with the RQ entry
+								//if some entries were already merged with the RQ entry
 								if (RQ.entry[index].instr_merged) {
-									//AB: combine the lists
+									//combine the lists
 									MSHR.entry[mshr_index].rob_index_depend_on_me.join (RQ.entry[index].rob_index_depend_on_me, ROB_SIZE);
 									DP (if (warmup_complete[MSHR.entry[mshr_index].cpu]) {
 									cout << "[INSTR_MERGED] " << __func__ << " cpu: " << MSHR.entry[mshr_index].cpu << " instr_id: " << MSHR.entry[mshr_index].instr_id;
 									cout << " merged rob_index: " << i << " instr_id: N/A" << endl; });
 								}
 							}
-							//AB: reading data
+							//reading data
 							else 
 							{
-								//AB: gets the LQ index of the RQ entry
+								//gets the LQ index of the RQ entry
 								uint32_t lq_index = RQ.entry[index].lq_index;
-								//AB: merges the load
+								//merges the load
 								MSHR.entry[mshr_index].load_merged = 1;
-								//AB: adds to the dependency list
+								//adds to the dependency list
 								MSHR.entry[mshr_index].lq_index_depend_on_me.insert(lq_index);
 
 								DP (if (warmup_complete[read_cpu]) {
 								cout << "[DATA_MERGED] " << __func__ << " cpu: " << read_cpu << " instr_id: " << RQ.entry[index].instr_id;
 								cout << " merged rob_index: " << RQ.entry[index].rob_index << " instr_id: " << RQ.entry[index].instr_id << " lq_index: " << RQ.entry[index].lq_index << endl; });
-								//AB: combines the dependency lists
+								//combines the dependency lists
 								MSHR.entry[mshr_index].lq_index_depend_on_me.join (RQ.entry[index].lq_index_depend_on_me, LQ_SIZE);
 								if (RQ.entry[index].store_merged) 
 								{
@@ -2049,11 +1812,11 @@ void CACHE::handle_read()
 							{
 								//If Load request gets a hit in mshr which used to be a prefetch request then this packet is send to read queue of lower level
 								int merged = add_read_to_lower_level(mshr_index,index,read_cpu); 
-							   	//AB: merging failed
+							   	//merging failed
 								if(merged == -1)
 									miss_handled = 0 ;
 							}
-							//AB: we assign the returned and event_cycle values of the original MSHR entry to the new one which is a copy of the RQ entry
+							//we assign the returned and event_cycle values of the original MSHR entry to the new one which is a copy of the RQ entry
 							if(miss_handled != 0)
 							MSHR.entry[mshr_index] = RQ.entry[index];
 							MSHR.entry[mshr_index].returned = prior_returned;
@@ -2103,7 +1866,6 @@ void CACHE::handle_read()
 						total_waiting_time_in_rq[RQ.entry[index].cpu] += ( current_core_cycle[RQ.entry[index].cpu] - RQ.entry[index].cycle_enqueued);	
 						// remove this entry from RQ
 						total_read_packets[RQ.entry[index].cpu]++;
-						// cout<<"Difference : "<< ( current_core_cycle[RQ.entry[index].cpu] - RQ.entry[index].cycle_enqueued);
 					}
 					RQ.entry[index].cycle_enqueued=current_core_cycle[RQ.entry[index].cpu];
 					RQ.remove_queue(&RQ.entry[index]);
@@ -2130,7 +1892,7 @@ void CACHE::handle_prefetch()
 
 		// handle the oldest entry
 		if ((PQ.entry[PQ.head].event_cycle <= current_core_cycle[prefetch_cpu]) && (PQ.occupancy > 0)) {
-			//AB: index of the PQ head entry
+			//index of the PQ head entry
 			int index = PQ.head;
 			unsigned long long cycle_enqued_at_head=PQ.entry[index].cycle_enqueued;
 			// access cache
@@ -2145,7 +1907,7 @@ void CACHE::handle_prefetch()
 				
 				if(tag_number >= 0) //gets a hit
 				{	
-					//AB: assigns corresponding set and way numbers
+					//assigns corresponding set and way numbers
 					if(tag_number == 0)
 					{
 						tag_set_number = tag0_set;
@@ -2156,7 +1918,7 @@ void CACHE::handle_prefetch()
 						assert(tag0[tag_set_number][tag_way].tag == PQ.entry[index].address);
 
 						if (tag0[tag_set_number][tag_way].priority == 0) {
-							//AB: this means that the entry is a priority 0 entry and already resides in the tag array - no need for load-aware skew selection!
+							//this means that the entry is a priority 0 entry and already resides in the tag array - no need for load-aware skew selection!
 							way = -2;
 						}
 						else	
@@ -2172,7 +1934,7 @@ void CACHE::handle_prefetch()
 						assert(tag1[tag_set_number][tag_way].tag == PQ.entry[index].address);
 
 						if (tag1[tag_set_number][tag_way].priority == 0) {
-							//AB: this means that the entry is a priority 0 entry and already resides in the tag array - no need for load-aware skew selection!
+							//this means that the entry is a priority 0 entry and already resides in the tag array - no need for load-aware skew selection!
 							way = -2;
 						}
 						else	
@@ -2182,7 +1944,7 @@ void CACHE::handle_prefetch()
 						way = -1;
 				}
 				else{
-					//AB: not a hit
+					//not a hit
 					way = -1;
 				}
 			}
@@ -2197,12 +1959,10 @@ void CACHE::handle_prefetch()
 			#if multi_step_relocation || bfs_on    //remap_on_evictions
 				if(CEASER_S_LLC == 1 && cache_type == IS_LLC)  //Overwrite 
 				{
-					//cout<<"Hi"<<endl;
 					uint32_t current_set=0;
 					way = check_hit_for_remap_on_evictions(&PQ.entry[index],  &current_set);
 					if(way != -1)
 						set = current_set;
-					//cout << "gotten set: " << set << endl;
 				}
 			#endif
 			if (way >= 0)
@@ -2220,7 +1980,6 @@ void CACHE::handle_prefetch()
 						DP ( if (warmup_complete[prefetch_cpu]) {
 						cout << "[" << NAME << "] " << __func__ ;
 						cout << " Router queue filled!" << " Prefetch_addr: " << hex << PQ.entry[index].address;
-						// cout << " victim_addr: " << block[set][way].tag << dec << endl;
 						});
 						return;
 					}
@@ -2273,7 +2032,6 @@ void CACHE::handle_prefetch()
 								DP ( if (warmup_complete[prefetch_cpu]) {
 								cout << "[" << NAME << "] " << __func__ ;
 								cout << " Router queue filled!" << " Prefetch_addr: " << hex << PQ.entry[index].address;
-								// cout << " victim_addr: " << block[set][way].tag << dec << endl;
 								 });
 								}
 							else
@@ -2454,8 +2212,6 @@ void CACHE::handle_prefetch()
 				}
 				else {
 					if ((mshr_index == -1) && (MSHR.occupancy == MSHR_SIZE)) { // not enough MSHR resource
-
-						// TODO: should we allow prefetching with lower fill level at this case?
 						
 						// cannot handle miss request until one of MSHRs is available
 						miss_handled = 0;
@@ -2582,7 +2338,7 @@ void CACHE::check_encryption_engine_for_queue_entries() //Gives encryption engin
 		 		if(RQ.occupancy > 0)
 				{
 					int index = RQ.first_element_which_need_encryption_engine();
-					//AB: valid entry
+					//valid entry
 					if(index != -1)
 					{
 						#if Pipelined_Encryption_Engine 
@@ -2602,7 +2358,7 @@ void CACHE::check_encryption_engine_for_queue_entries() //Gives encryption engin
 		   		if(PQ.occupancy > 0  && is_encryption_engine_busy == 0)
 				{
 					int index = PQ.first_element_which_need_encryption_engine();
-					//AB: valid entry
+					//valid entry
 					if(index != -1)
 					{
 						#if Pipelined_Encryption_Engine
@@ -2646,7 +2402,7 @@ void CACHE::check_encryption_engine_for_queue_entries() //Gives encryption engin
 			uint64_t min_enqued_cycle = UINT64_MAX;
 			for (uint32_t index=0; index<MSHR_SIZE; index++)
 			{	
-				//AB: valid entry - entry has been returned
+				//valid entry - entry has been returned
 				if(MSHR.entry[index].address != 0 && min_enqued_cycle > MSHR.entry[index].cycle_enqueued && (MSHR.entry[index].returned == COMPLETED) && MSHR.entry[index].event_cycle == UINT64_MAX )
 				{
 					min_enqued_cycle = MSHR.entry[index].cycle_enqueued;
@@ -2789,7 +2545,7 @@ int CACHE::remove_block_based_on_tag_array(int tag_number,int tag_set_number,int
 	assert(block[block_set][block_way].valid == 1);
 	assert(block[block_set][block_way].tag_set == tag_set_number && block[block_set][block_way].tag_way == tag_way);
 
-	//AB: increment SAE counter
+	//increment SAE counter
 	sae_count++;
 	cout << "SAE" << sae_count << endl;
 
@@ -3200,7 +2956,7 @@ if (packet->address == 1084953 && cache_type == IS_LLC){
 			assert(0);
 	}
 #endif
-	//AB: block was prefetched but never used
+	//block was prefetched but never used
 	if (block[set][way].prefetch && (block[set][way].used == 0))
 		pf_useless++;
 
