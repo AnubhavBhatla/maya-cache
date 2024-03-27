@@ -9,7 +9,7 @@ fi
 BINARY=${1}
 N_WARM=${2}
 N_SIM=${3}
-TRACE_DIR=$(pwd)/spec_2017
+TRACE_DIR=$(pwd)/../traces/spec
 OPTION=${4}
 
 if [ -z $TRACE_DIR ]; then
