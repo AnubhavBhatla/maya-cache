@@ -2,14 +2,14 @@
 
 if [ "$#" -lt 4 ]; then 
     echo "Illegal number of parameters"
-    echo "Usage: ./run_8core_homo_gap.sh [BINARY] [N_WARM] [N_SIM] [TRACE_DIR] [OPTION]"
+    echo "Usage: ./run_1core_spec_.sh [BINARY] [N_WARM] [N_SIM] [TRACE_DIR] [OPTION]"
     exit 1
 fi
 
 BINARY=${1}
 N_WARM=${2}
 N_SIM=${3}
-TRACE_DIR=$(pwd)/../traces/gap
+TRACE_DIR=$(pwd)/../traces/spec
 OPTION=${4}
 
 if [ -z $TRACE_DIR ]; then
@@ -36,14 +36,14 @@ fi
 
 cd $TRACE_DIR
 
-mkdir -p $(pwd)/../../maya/results/${OPTION}
+mkdir -p $(pwd)/../$OPTION
 
 for TRACE in *;
 do
     if [ "$TRACE" != "wget-log" ]
     then
-	name=${TRACE%.trace.gz}
-	(./../../maya/${BINARY} -warmup_instructions ${N_WARM}000000 -simulation_instructions ${N_SIM}000000 -traces ${TRACE_DIR}/${TRACE} ${TRACE_DIR}/${TRACE} ${TRACE_DIR}/${TRACE} ${TRACE_DIR}/${TRACE} ${TRACE_DIR}/${TRACE} ${TRACE_DIR}/${TRACE} ${TRACE_DIR}/${TRACE} ${TRACE_DIR}/${TRACE}) > $(pwd)/../../maya/results/${OPTION}/${name}_${N_WARM}M_${N_SIM}M.txt &
+	name=${TRACE%.champsimtrace.xz}
+	(./../${BINARY} -warmup_instructions ${N_WARM}000000 -simulation_instructions ${N_SIM}000000 -traces ${TRACE_DIR}/${TRACE}) > $(pwd)/../${OPTION}/${name}_${N_WARM}M_${N_SIM}M.txt &
     else
 	continue
     fi

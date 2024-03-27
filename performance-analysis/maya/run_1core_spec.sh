@@ -36,14 +36,14 @@ fi
 
 cd $TRACE_DIR
 
-mkdir -p $(pwd)/../results_$OPTION
+mkdir -p $(pwd)/../../maya/results/${OPTION}
 
 for TRACE in *;
 do
     if [ "$TRACE" != "wget-log" ]
     then
 	name=${TRACE%.champsimtrace.xz}
-	(./../${BINARY} -warmup_instructions ${N_WARM}000000 -simulation_instructions ${N_SIM}000000 -traces ${TRACE_DIR}/${TRACE}) > $(pwd)/../results_${OPTION}/${name}_${N_WARM}M_${N_SIM}M.txt &
+	(./../../maya/${BINARY} -warmup_instructions ${N_WARM}000000 -simulation_instructions ${N_SIM}000000 -traces ${TRACE_DIR}/${TRACE}) > $(pwd)/../../maya/results/${OPTION}/${name}_${N_WARM}M_${N_SIM}M.txt &
     else
 	continue
     fi
