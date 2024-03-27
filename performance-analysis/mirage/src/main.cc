@@ -143,7 +143,11 @@ void print_roi_stats(uint32_t cpu, CACHE *cache)
     
     cout << cache->NAME;
     cout << " AVERAGE MISS LATENCY: " << (1.0*(cache->roi_miss_latency[cpu]))/TOTAL_MISS << " cycles" << endl;
-    cout <<endl;
+
+    if (cache->NAME == "LLC0"){
+        cout << "Deadblocks : " << cache->counter_deadblock << " Deadblock percentage : " << (100.0*(cache->counter_deadblock))/cache->roi_miss[cpu][0] << endl;
+        cout <<endl;
+    }
 }
 
 
@@ -224,6 +228,7 @@ void print_sim_stats(uint32_t cpu, CACHE *cache)
     else
         cout<< "  AVERAGE MISS PENALTY: 0"<<endl;
     cout<<endl;
+
 }
 
 void print_branch_stats()
@@ -357,6 +362,8 @@ void reset_cache_stats(uint32_t cpu, CACHE *cache)
     cache->pf_late = 0;
     cache->pf_dropped=0;
     cache->pf_lower_level = 0;
+
+    cache->counter_deadblock = 0;
 }
 
 void finish_warmup()
@@ -1015,10 +1022,10 @@ for(int i=0; i<NUM_CPUS; i++)
 
 
             cout<<"CEASER-S_LLC:"<<CEASER_S_LLC<<endl;
-	    #ifdef MIRAGE
+	    #if MIRAGE
 	    	cout<<"MIRAGE : 1"<<endl;
 	    #else 
-		cout<<"MIRAGE : 0"<<endl;
+		    cout<<"MIRAGE : 0"<<endl;
 	    #endif
 	    cout<<"CEASER_LATENCY:" <<CEASER_LATENCY<<endl;
             int remap=0;
@@ -1417,6 +1424,7 @@ for(int i=0; i<NUM_CPUS; i++)
 								counter++;
 					}
 			}
+        
 		cout<<" Total Blocks : "<< (LLC_SET * LLC_WAY * NUM_SLICES ) << " Invalid Blocks : "<<counter<<endl;
 		ooo_cpu[i].next_print_instruction += STAT_PRINTING_PERIOD;
 

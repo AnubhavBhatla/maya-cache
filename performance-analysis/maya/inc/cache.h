@@ -183,7 +183,7 @@ class CACHE : public MEMORY {
     int sae_count = 0;
     uint64_t interference_count = 0;
 	uint32_t tag0_set = 0, tag1_set = 0;
-	struct tag_array tag0[LLC_SET][/*extra_tag_ways */ 15], tag1[LLC_SET][/*extra_tag_ways*/ 15];
+	struct tag_array tag0[LLC_SET][15], tag1[LLC_SET][15];
 
 //	unsigned long long read_packet_counter=0,mshr_packet_counter=0;
     //bool curr_or_next_key[LLC_SET][LLC_WAY];

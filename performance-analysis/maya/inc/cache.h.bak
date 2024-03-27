@@ -156,7 +156,7 @@ class CACHE : public MEMORY {
     //word cur_keyy[16][4*(Nr+1)],next_keyy[16][4*(Nr+1)];//CEASER-s
     uint8_t k[16], curr_keys[16][16], next_keys[16][16], curr_key[16], next_key[16];
     uint32_t ceaser_s_set[16],ceaser_s_next_set[16],c_or_n=0;//CEASER-S
-    int partitions = 1; //16 for scatter cache 2 for CEASER_S
+    int partitions; //16 for scatter cache 2 for CEASER_S
     int llc_queue_turn=0,SLICE_NUM = 0;
     uint64_t cache_stall_cycle, encryption_stall_cycle; // To stall cache while remapping
     uint64_t decryption_stall_cycle;
@@ -177,13 +177,13 @@ class CACHE : public MEMORY {
 	//BFS
 	int marked[2048];
 	struct bfs_queue queue[50000];
-	int extra_tag_ways = 15;
+	int extra_tag_ways = 13;
     int threshold_pr0 = 2048*6;
     int num_pr0 = 0;
     int sae_count = 0;
     uint64_t interference_count = 0;
 	uint32_t tag0_set = 0, tag1_set = 0;
-	struct tag_array tag0[LLC_SET][/*extra_tag_ways */ 15], tag1[LLC_SET][/*extra_tag_ways*/ 15];
+	struct tag_array tag0[LLC_SET][15], tag1[LLC_SET][15];
 
 //	unsigned long long read_packet_counter=0,mshr_packet_counter=0;
     //bool curr_or_next_key[LLC_SET][LLC_WAY];

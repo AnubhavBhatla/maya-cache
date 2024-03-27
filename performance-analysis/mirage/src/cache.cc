@@ -438,13 +438,17 @@ if (block[set][way].dirty)
 				if((tag_number == 0 && tag0[tag_set_number][tag_way].valid == 1) || (tag_number == 1 && tag1[tag_set_number][tag_way].valid == 1))
 				{	
 					remove_block_based_on_tag_array(tag_number,tag_set_number,tag_way);
-					cout<<"Remove Block based on tag array  tag_number : "<<tag_number<<" tag_set "<<tag_set_number<<" tag_way : "<<tag_way<<endl;
+					//cout<<"Remove Block based on tag array  tag_number : "<<tag_number<<" tag_set "<<tag_set_number<<" tag_way : "<<tag_way<<endl;
 				}
 				fill_tag(tag_number,tag_set_number,tag_way,MSHR.entry[mshr_index].address,set,way);	
 				//cout<<"Fill_cache in Handle_Fill : set = "<<set<<" way : "<<way<<endl;
 				if(set1 != set && way1 != way)
 					assert(0);
 			}
+			if (MSHR.entry[mshr_index].type == LOAD && cache_type == IS_LLC && block[set][way].used == 0){
+				counter_deadblock++;
+			}
+
 			fill_cache(set, way, &MSHR.entry[mshr_index]);
 			// RFO marks cache line dirty
 			if (cache_type == IS_L1D) 
@@ -2182,7 +2186,8 @@ uint32_t CACHE::random_way()
 }
 int CACHE::remove_block_based_on_tag_array(int tag_number,int tag_set_number,int tag_way)
 {
-	cout<<"Remove tag from tag array corresponding to tag_number "<<tag_number<<" tag_set : "<<tag_set_number<<" and tag_way : "<<tag_way<<endl;
+	cout << "SAE" << endl;
+	//cout<<"Remove tag from tag array corresponding to tag_number "<<tag_number<<" tag_set : "<<tag_set_number<<" and tag_way : "<<tag_way<<endl;
 	uint32_t block_set;
 	int block_way,tag_valid=0;
 

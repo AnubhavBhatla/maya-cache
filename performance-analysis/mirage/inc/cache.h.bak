@@ -85,7 +85,7 @@ extern uint32_t PAGE_TABLE_LATENCY, SWAP_LATENCY;
 
 #if NUM_CPUS == NUM_SLICES
  	//Sliced LLC
-//	#define LLC_SET 2048 
+//	#define LLC_SET 2048
 	#define LLC_WAY 16
 //	#define LLC_RQ_SIZE L2C_MSHR_SIZE //48
 //	#define LLC_WQ_SIZE L2C_MSHR_SIZE //48
@@ -102,17 +102,21 @@ extern uint32_t PAGE_TABLE_LATENCY, SWAP_LATENCY;
 //	#define LLC_MSHR_SIZE NUM_CPUS*64
  // 5 (L1I or L1D) + 10 + 20 = 35 cycle
 #endif
+
+#define MIRAGE 0
+
 ///* Analysing single port
 #if CEASER_LLC == 1 || CEASER_S_LLC == 1
        #define LLC_LATENCY (20  + CEASER_LATENCY)  // 5 (L1I or L1D) + 10 + 20 = 35 cycles 
+#elif MIRAGE == 1
+        #define LLC_LATENCY (24 + 4)
 #else
-        #define LLC_LATENCY (20 + CEASER_LATENCY)
+        #define LLC_LATENCY (24)
 #endif
 //#define No_Remapping
 //uncomment it for no remapping
 //#define No_Randomization
 //uncomment it for no randomization
-#define MIRAGE 1
 //For multi_step_reallocation : 1 else 0
 //#define multi_step_relocation 1
 //#define bfs_on 1
@@ -169,12 +173,14 @@ class CACHE : public MEMORY {
 	uint64_t count_remap=0, blocks_less_evicted=0,invalid_blocks_before_remapping=0;
 	uint64_t reuse_distance[2048*100],victim_hit,total_blocks_remapped=0;
 	uint64_t dead_block=0, total_bfs=0;
+    //Deadblocks
+    uint64_t counter_deadblock=0;
 	//BFS
 	int marked[2048];
 	struct bfs_queue queue[50000];
 	int extra_tag_ways=14;
 	uint32_t tag0_set=0,tag1_set=0;
-	struct tag_array tag0[LLC_SET][/*extra_tag_ways */ 14 ], tag1[LLC_SET][/*extra_tag_ways*/ 14];
+	struct tag_array tag0[LLC_SET][/*extra_tag_ways */ 14], tag1[LLC_SET][/*extra_tag_ways*/ 14];
 //	unsigned long long read_packet_counter=0,mshr_packet_counter=0;
     //bool curr_or_next_key[LLC_SET][LLC_WAY];
 /*--------------------------------------------------------------------------------------------*/

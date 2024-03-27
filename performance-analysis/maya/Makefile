@@ -6,9 +6,9 @@ objDir = obj
 binDir = bin
 inc = inc
 
-debug = 1
+debug = 0
 
-CFlags = -Wall -O0   -g  -std=c++11
+CFlags = -Wall -O0   -g  -std=c++11 -w
 LDFlags = 
 libs =
 libDir =
