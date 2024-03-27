@@ -1,0 +1,283 @@
+////////////////////////////////////////////
+//                                        //
+//     SRRIP [Jaleel et al. ISCA' 10]     //
+//     Jinchun Kim, cienlux@tamu.edu      //
+//                                        //
+////////////////////////////////////////////
+//
+//#include "../inc/champsim_crc2.h"
+
+#include "cache.h"
+#include <cstdlib>
+#include <ctime>
+
+
+#define NUM_CORE 1   //4
+#define MAX_LLC_SETS LLC_SET  //8192
+#define LLC_WAYS 16
+
+#define SAT_INC(x,max)  (x<max)?x+1:x
+#define SAT_DEC(x)      (x>0)?x-1:x
+#define TRUE 1
+#define FALSE 0
+
+#define RRIP_OVERRIDE_PERC   0
+
+
+
+// The base policy is SRRIP. SHIP needs the following on a per-line basis
+#define maxRRPV 3
+uint32_t line_rrpv[MAX_LLC_SETS][LLC_WAYS];
+uint32_t is_prefetch[MAX_LLC_SETS][LLC_WAYS];
+uint32_t fill_core[MAX_LLC_SETS][LLC_WAYS];
+
+// These two are only for sampled sets (we use 64 sets)
+#define NUM_LEADER_SETS   64
+
+uint32_t ship_sample[MAX_LLC_SETS];
+uint32_t line_reuse[MAX_LLC_SETS][LLC_WAYS];
+uint64_t line_sig[MAX_LLC_SETS][LLC_WAYS];
+	
+// SHCT. Signature History Counter Table
+// per-core 16K entry. 14-bit signature = 16k entry. 3-bit per entry
+#define maxSHCTR 7
+#define SHCT_SIZE  16384   //(1<<14)
+uint32_t SHCT[NUM_CORE][SHCT_SIZE];
+
+
+// Statistics
+uint64_t insertion_distrib[NUM_TYPES][maxRRPV+1];
+uint64_t total_prefetch_downgrades;
+
+// initialize replacement state
+
+//void InitReplacementState()
+void CACHE::llc_initialize_replacement()
+{
+    //int LLC_SETS = LLC_SET;      //(get_config_number() <= 2) ? 2048 : MAX_LLC_SETS;
+
+    cout << "Initialize SRRIP state" << endl;
+
+    for (int i=0; i<MAX_LLC_SETS; i++) {
+        for (int j=0; j<LLC_WAYS; j++) {
+            line_rrpv[i][j] = maxRRPV;
+            line_reuse[i][j] = FALSE;
+            is_prefetch[i][j] = FALSE;
+            line_sig[i][j] = 0;
+        }
+    }
+
+    for (int i=0; i<NUM_CORE; i++) {
+        for (int j=0; j<SHCT_SIZE; j++) {
+            SHCT[i][j] = 1; // Assume weakly re-use start
+        }
+    }
+
+    int leaders=0;
+	
+    int jump = LLC_SET/NUM_LEADER_SETS;
+    while(leaders<NUM_LEADER_SETS){
+      int randval = jump*leaders;                //rand()%LLC_SETS;
+      
+      if(ship_sample[randval]==0){
+	cout<<"Sample Sets : "<< randval<<endl;
+	ship_sample[randval]=1;
+	leaders++;
+      }
+    }
+}
+
+// find replacement victim
+// return value should be 0 ~ 15 or 16 (bypass)
+//uint32_t GetVictimInSet(uint32_t cpu, uint32_t set, const BLOCK *current_set, uint64_t PC, uint64_t paddr, uint32_t type)
+uint32_t CACHE::llc_find_victim(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t PC, uint64_t full_addr, uint32_t type)
+{
+    // look for the maxRRPV line
+    while (1)
+    {
+        for (int i=0; i<LLC_WAYS; i++)
+            if (line_rrpv[set][i] == maxRRPV) { // found victim
+                return i;
+            }
+
+        for (int i=0; i<LLC_WAYS; i++)
+            line_rrpv[set][i]++;
+    }
+
+    // WE SHOULD NOT REACH HERE
+    assert(0);
+    return 0;
+}
+
+// find replacement victim for CEASER_S
+uint32_t CACHE::llc_find_victim_ceaser_s(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type,int part)
+{
+	llc_find_victim( cpu, instr_id, set, current_set, ip, full_addr, type);
+}
+
+// called on every cache hit and cache fill
+//void UpdateReplacementState (uint32_t cpu, uint32_t set, uint32_t way, uint64_t paddr, uint64_t PC, uint64_t victim_addr, uint32_t type, uint8_t hit)
+void CACHE::llc_update_replacement_state(uint32_t cpu, uint32_t set, uint32_t way, uint64_t full_addr, uint64_t PC, uint64_t victim_addr, uint32_t type, uint8_t hit)
+{
+  uint32_t sig   = line_sig[set][way];
+
+    if (hit) { // update to REREF on hit
+        if( type != WRITEBACK ) 
+        {
+
+            if( (type == PREFETCH) && is_prefetch[set][way] )
+            {
+//                line_rrpv[set][way] = 0;
+                
+                if( (ship_sample[set] == 1) && ((rand()%100 <5) ) ) // || (get_config_number()==4))) 
+                {
+                    uint32_t fill_cpu = fill_core[set][way];
+
+                    SHCT[fill_cpu][sig] = SAT_INC(SHCT[fill_cpu][sig], maxSHCTR);
+                    line_reuse[set][way] = TRUE;
+                }
+            }
+            else 
+            {
+                line_rrpv[set][way] = 0;
+
+                if( is_prefetch[set][way] )
+                {
+                    line_rrpv[set][way] = maxRRPV;
+                    is_prefetch[set][way] = FALSE;
+                    total_prefetch_downgrades++;
+                }
+
+                if( (ship_sample[set] == 1) && (line_reuse[set][way]==0) ) 
+                {
+                    uint32_t fill_cpu = fill_core[set][way];
+
+                    SHCT[fill_cpu][sig] = SAT_INC(SHCT[fill_cpu][sig], maxSHCTR);
+                    line_reuse[set][way] = TRUE;
+                }
+            }
+        }
+        
+	return;
+    }
+    
+    //--- All of the below is done only on misses -------
+    // remember signature of what is being inserted
+    uint64_t use_PC = (type == PREFETCH ) ? ((PC << 1) + 1) : (PC<<1);
+    uint32_t new_sig = use_PC%SHCT_SIZE;
+    
+    if( ship_sample[set] == 1 ) 
+    {
+        uint32_t fill_cpu = fill_core[set][way];
+        
+        // update signature based on what is getting evicted
+        if (line_reuse[set][way] == FALSE) { 
+            SHCT[fill_cpu][sig] = SAT_DEC(SHCT[fill_cpu][sig]);
+        }
+        else 
+        {
+            SHCT[fill_cpu][sig] = SAT_INC(SHCT[fill_cpu][sig], maxSHCTR);
+        }
+
+        line_reuse[set][way] = FALSE;
+        line_sig[set][way]   = new_sig;  
+        fill_core[set][way]  = cpu;
+    }
+
+
+
+    is_prefetch[set][way] = (type == PREFETCH);
+
+    // Now determine the insertion prediciton
+
+    uint32_t priority_RRPV = maxRRPV-1 ; // default SHIP
+
+    if( type == WRITEBACK )
+    {
+        line_rrpv[set][way] = maxRRPV;
+    }
+    else if (SHCT[cpu][new_sig] == 0) {
+      line_rrpv[set][way] = (rand()%100>=RRIP_OVERRIDE_PERC)?  maxRRPV: priority_RRPV; //LowPriorityInstallMostly
+    }
+    else if (SHCT[cpu][new_sig] == 7) {
+        line_rrpv[set][way] = (type == PREFETCH) ? 1 : 0; // HighPriority Install
+    }
+    else {
+        line_rrpv[set][way] = priority_RRPV; // HighPriority Install 
+    }
+
+    // Stat tracking for what insertion it was at
+    insertion_distrib[type][line_rrpv[set][way]]++;
+
+}
+void CACHE::remap_llc_update_replacement_state(uint32_t oldset,uint32_t way,uint32_t newset,uint32_t newway,uint64_t tag)
+{
+                line_rrpv[newset][newway] = line_rrpv[oldset][way];
+                line_rrpv[oldset][way]=maxRRPV;
+
+}
+
+void CACHE::llc_replacement_final_stats()
+{
+
+}
+void CACHE::llc_update_ceaser_s(uint32_t set, uint32_t way)
+{
+}
+
+
+// use this function to print out your own stats on every heartbeat 
+void PrintStats_Heartbeat()
+{
+}
+
+string names[] = 
+{
+    "LOAD", "RFO", "PREF", "WRITEBACK" 
+};
+
+// use this function to print out your own stats at the end of simulation
+void PrintStats()
+{
+    cout<<"Insertion Distribution: "<<endl;
+    for(uint32_t i=0; i<NUM_TYPES; i++) 
+    {
+        cout<<"\t"<<names[i]<<" ";
+        for(uint32_t v=0; v<maxRRPV+1; v++) 
+        {
+            cout<<insertion_distrib[i][v]<<" ";
+        }
+        cout<<endl;
+    }
+
+    cout<<"Total Prefetch Downgrades: "<<total_prefetch_downgrades<<endl;
+    
+}
+
+
+uint32_t CACHE::remap_find_victim(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type, int part)
+{
+for(uint32_t way=(part * (NUM_WAY/partitions)); way<NUM_WAY && (way < ((part+1) * (NUM_WAY/partitions))) ; way++)
+        {
+            if (block[set][way].valid != 1){
+        //      printf("way = %d ",way);
+                return way;
+                }
+        }
+        int max_rrpv=0,i;
+        for (uint32_t way=(part * (NUM_WAY/partitions)); way<NUM_WAY && (way < ((part+1) * (NUM_WAY/partitions))) ; way++)
+        {
+                if(line_rrpv[set][way] >= max_rrpv)
+                {
+                        max_rrpv = line_rrpv[set][way];
+                        i=way;
+                }
+        }
+        return i;
+}
+
+int CACHE::rrpv_value(uint32_t set, uint32_t way)
+{
+                return line_rrpv[set][way];
+}
+

@@ -1,0 +1,341 @@
+#include "cache.h"
+
+#define maxRRPV 3
+#define NUM_POLICY 2
+#define SDM_SIZE 32
+#define TOTAL_SDM_SETS NUM_CPUS*NUM_POLICY*SDM_SIZE
+#define BIP_MAX 32
+#define PSEL_WIDTH 10
+#define PSEL_MAX ((1<<PSEL_WIDTH)-1)
+#define PSEL_THRS PSEL_MAX/2
+
+#define bits(x, i, l) (((x) >> (i)) & bitmask(l))
+
+#include <math.h>
+#define bitmask(l)                                                             \
+  (((l) == 64) ? (unsigned long long)(-1LL) : ((1LL << (l)) - 1LL))
+
+int SAMPLED_SET(int set){                                                       
+ if((bits(set, 0, 6) == bits(set, ((unsigned long long)log2(LLC_SET) - 6), 6)))
+	return 1;
+ else
+	return 0;
+}
+uint32_t rrpv[LLC_SET][LLC_WAY],
+         bip_counter = 0,
+         PSEL[NUM_CPUS];
+unsigned rand_sets[TOTAL_SDM_SETS];
+
+struct remap_table {
+	uint64_t tag;
+	uint32_t rrpv;
+	int new_block;
+};
+struct remap_table original_sample_set[TOTAL_SDM_SETS][LLC_WAY];
+void CACHE::llc_initialize_replacement()
+{
+    cout << "Initialize DRRIP state" << endl;
+
+    for(int i=0; i<LLC_SET; i++) {
+        for(int j=0; j<LLC_WAY; j++)
+            rrpv[i][j] = maxRRPV;
+    }
+
+    // randomly selected sampler sets
+    //srand(time(NULL));
+    unsigned long rand_seed = 1;
+    unsigned long max_rand = 1048576;
+    uint32_t my_set = LLC_SET;
+    int do_again = 0;
+    /*for (int i=0; i<TOTAL_SDM_SETS; i++) {
+        do {
+            do_again = 0;
+            //rand_seed = rand_seed * 1103515245 + 12345;
+            //rand_sets[i] = ((unsigned) ((rand_seed/65536) % max_rand)) % my_set;
+            for(int j=i; j<LLC_SET;j++)
+            if(SAMPLED_SET(j))
+                rand_sets[i] = j;  	
+//printf("Assign rand_sets[%d]: %u  LLC: %u\n", i, rand_sets[i], my_set);
+            for (int j=0; j<i; j++) {
+                if (rand_sets[i] == rand_sets[j]) {
+                    do_again = 1;
+                    break;
+                }
+            }
+        } while (do_again);
+        printf("rand_sets[%d]: %d\n", i, rand_sets[i]);
+    }*/
+	int i=0;
+		for(int j=0; j<LLC_SET;j++){
+                                if(i<TOTAL_SDM_SETS)
+                                {
+                                        rand_sets[i] = 31*i;                  //((unsigned) ((rand_seed/65536) % max_rand)) % my_set;
+                                        cout<<"LLC SETS"<<LLC_SET<<" SAMPLED_SET : "<<j<<endl;
+                                        i++;
+                                }
+                }
+
+
+    for (int i=0; i<NUM_CPUS; i++)
+        PSEL[i] = 0;
+
+cout << "Initialize DRRIP Remap Table" << endl;
+    for (int i=0; i<TOTAL_SDM_SETS; i++)
+	for(int way=0; way < LLC_WAY; way++)
+	{
+		original_sample_set[i][way].rrpv=maxRRPV;
+		original_sample_set[i][way].tag=0;
+		original_sample_set[i][way].new_block=-1;
+	}
+cout<<"Initialization Over"<<endl;			
+}
+
+int is_it_leader(uint32_t cpu, uint32_t set)
+{
+    uint32_t start = cpu * NUM_POLICY * SDM_SIZE,
+             end = start + NUM_POLICY * SDM_SIZE;
+
+    for (uint32_t i=start; i<end; i++)
+        if (rand_sets[i] == set)
+            return ((i - start) / SDM_SIZE);
+
+    return -1;
+}
+
+// called on every cache hit and cache fill
+void CACHE::llc_update_replacement_state(uint32_t cpu, uint32_t set, uint32_t way, uint64_t full_addr, uint64_t ip, uint64_t victim_addr, uint32_t type, uint8_t hit)
+{
+
+    // do not update replacement state for writebacks
+    //if (type == WRITEBACK) {
+      //  rrpv[set][way] = maxRRPV-1;
+       // return;
+   // }
+
+    /*uint64_t tag = (full_addr>>LOG2_BLOCK_SIZE);
+    if(tag ==0)
+    {
+        cout<<type<<endl;
+	assert(0);
+    }
+    uint64_t address = (full_addr>>LOG2_BLOCK_SIZE);
+    //Based on Index Bits
+    int original_set =  ((uint32_t) (address & ((1 << lg2(NUM_SET*NUM_SLICES)) - 1)))>>lg2(NUM_SLICES);
+    if(original_set != set)
+	assert(0);
+    int leader = is_it_leader(cpu, original_set); //leader should be find based on original_set
+    if(leader == -1){ // follower sets
+	if(is_it_sampled(cpu, set) != -1) 
+		{
+			cout<<"Leader is : "<<leader<<endl;
+			cout<<"set "<<set<<" original_set "<<original_set<<endl;
+			int index = is_it_sampled(cpu, set);
+			cout<<"is_it_sampled : "<<index<<endl;
+			cout<<"current set : "<<set<<" rand_sets[index] "<<rand_sets[index]<<endl;	
+			assert(0);
+		}
+	// cache hit
+	if (type == WRITEBACK) {
+        	rrpv[set][way] = maxRRPV-1;
+        	return;
+   	}
+
+	if (hit) { 
+		rrpv[set][way] = 0; // for cache hit, DRRIP always promotes a cache line to the MRU position
+		return;
+	}
+	else { //cache_miss
+        	if (PSEL[cpu] > PSEL_THRS) { // follow BIP
+            		rrpv[set][way] = maxRRPV;
+
+            		bip_counter++;
+            		if (bip_counter == BIP_MAX)
+                		bip_counter = 0;
+            		if (bip_counter == 0)
+                		rrpv[set][way] = maxRRPV-1;
+        	} else // follow SRRIP
+            		rrpv[set][way] = maxRRPV-1;
+	}
+    }
+    else{ //sampled_set
+	//	cout<<"LLC_UPDATE"<<" set : "<<set<<endl<<endl<<endl;
+		int index = is_it_sampled(cpu, original_set);
+		 
+		int remap_table_way=-1; 
+		if (index != -1){
+			for(int i = 0;i < LLC_WAY;i++)
+			{
+				if(tag  == original_sample_set[index][i].tag) //Checks Tag
+				{
+						if (type == WRITEBACK) {
+                					rrpv[set][way] = maxRRPV-1;
+							original_sample_set[index][i].rrpv = maxRRPV-1;
+                					return;
+        					}
+
+						original_sample_set[index][i].rrpv = 0; // for cache hit, DRRIP always promotes a cache line to the MRU position
+						rrpv[set][way] = 0;
+						remap_table_way = i;
+						return;
+				}
+			}
+			if(remap_table_way == -1)
+			{
+				int j =find_victim_original_set(index);
+				update_original_set(index,j,tag);
+				remap_table_way = j;
+			}
+			if(remap_table_way != way)
+			{
+				assert(0);
+			}	
+			if (type == WRITEBACK) {
+				original_sample_set[index][remap_table_way].rrpv = maxRRPV-1;
+                		rrpv[set][way] = maxRRPV-1;
+                		return;
+        		}
+
+			if(hit == 1 )
+			{
+				cout<<"Set : "<<set<<" WAY : "<<way<<" Tag : "<<block[set][way].tag<<endl;
+				cout << "Original Set : "<<original_set<<endl;
+				cout<<"Index : "<<index<<endl; 
+				cout << "rand_sets[index] : " << rand_sets[index]<<endl; 
+				for(int i = 0;i < LLC_WAY;i++)
+				{
+					cout<<"Tag : "<<original_sample_set[index][i].tag<<" ";
+				}
+				cout<<endl;
+				assert(0);
+			}
+			//miss
+			if (leader == 0) { // leader 0: BIP
+        			if (PSEL[cpu] > 0) PSEL[cpu]--;
+        				original_sample_set[index][remap_table_way].rrpv = maxRRPV;
+					rrpv[set][way] = maxRRPV;
+        			bip_counter++;
+        			if (bip_counter == BIP_MAX) bip_counter = 0;
+        			if (bip_counter == 0) 
+				{
+					original_sample_set[index][remap_table_way].rrpv = maxRRPV-1;
+					rrpv[set][way] = maxRRPV-1;
+				}
+
+			} else if (leader == 1) { // leader 1: SRRIP 
+        			if (PSEL[cpu] < PSEL_MAX) PSEL[cpu]++;
+        				original_sample_set[index][remap_table_way].rrpv = maxRRPV-1;
+					rrpv[set][way] = maxRRPV-1;
+    			}
+			
+		} 
+	
+
+
+}*/
+
+	// cache hit
+	 if (type == WRITEBACK) {
+          rrpv[set][way] = maxRRPV-1;
+          return;
+          }
+
+	if (hit) { 
+		rrpv[set][way] = 0; // for cache hit, DRRIP always promotes a cache line to the MRU position
+		return;
+	}
+
+	// cache miss
+    int leader = is_it_leader(cpu, set);
+
+    if (leader == -1) { // follower sets
+        if (PSEL[cpu] > PSEL_THRS) { // follow BIP
+            rrpv[set][way] = maxRRPV;
+
+            bip_counter++;
+            if (bip_counter == BIP_MAX)
+                bip_counter = 0;
+            if (bip_counter == 0)
+                rrpv[set][way] = maxRRPV-1;
+        } else // follow SRRIP
+            rrpv[set][way] = maxRRPV-1;
+
+    } else if (leader == 0) { // leader 0: BIP
+        if (PSEL[cpu] > 0) PSEL[cpu]--;
+        rrpv[set][way] = maxRRPV;
+
+        bip_counter++;
+        if (bip_counter == BIP_MAX) bip_counter = 0;
+        if (bip_counter == 0) rrpv[set][way] = maxRRPV-1;
+
+	} else if (leader == 1) { // leader 1: SRRIP 
+        if (PSEL[cpu] < PSEL_MAX) PSEL[cpu]++;
+        rrpv[set][way] = maxRRPV-1;
+
+    } else // WE SHOULD NOT REACH HERE
+        assert(0); 
+}
+// find replacement victim for CEASER_S
+uint32_t CACHE::llc_find_victim_ceaser_s(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type,int part)
+{
+    // look for the maxRRPV line
+    while (1)
+    {
+        for (uint32_t way=(part * (LLC_WAY/partitions)); way<LLC_WAY && (way < ((part+1) * (LLC_WAY/partitions))) ; way++)
+            if (rrpv[set][way]  == maxRRPV)
+                return way;
+            
+        for (uint32_t way=(part * (LLC_WAY/partitions)); way<NUM_WAY && (way < ((part+1) * (LLC_WAY/partitions))) ; way++)
+            rrpv[set][way]++;
+    }
+
+    // WE SHOULD NOT REACH HERE
+    assert(0);
+    return 0;
+}
+
+// find replacement victim
+uint32_t CACHE::llc_find_victim(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type)
+{
+    // look for the maxRRPV line
+    /*if((is_it_sampled(cpu, set) != -1) && cache_type == IS_LLC)
+	{
+		cout<<"LLC_FIND_VICTIM " << endl;
+		print_encrypted_set(set);
+		print_original_set(set);
+	}*/
+    while (1)
+    {
+        for (int i=0; i<LLC_WAY; i++)
+            if (rrpv[set][i] == maxRRPV)
+	    {
+                return i;
+	    }
+        for (int i=0; i<LLC_WAY; i++)
+            rrpv[set][i]++;
+    }
+
+    // WE SHOULD NOT REACH HERE
+    assert(0);
+    return 0;
+}
+void CACHE::remap_llc_update_replacement_state(uint32_t oldset,uint32_t way,uint32_t newset,uint32_t newway,uint64_t tag)
+{
+                rrpv[newset][newway] = rrpv[oldset][way];
+                rrpv[oldset][way]=maxRRPV;
+
+}
+int CACHE::rrpv_value(uint32_t set, uint32_t way)
+{
+                return rrpv[set][way];
+}
+
+void CACHE::llc_update_ceaser_s(uint32_t set, uint32_t way)
+{
+}
+
+// use this function to print out your own stats at the end of simulation
+
+void CACHE::llc_replacement_final_stats()
+{
+
+}
