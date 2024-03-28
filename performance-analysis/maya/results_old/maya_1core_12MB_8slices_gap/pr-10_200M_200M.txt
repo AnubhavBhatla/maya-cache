@@ -103,7 +103,6 @@ Heartbeat CPU 0 instructions: 80000000 cycles: 74774647 heartbeat IPC: 0.964891 
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 303286 Pr0 Tags : 98304 Pr1 Tags : 89930 num_pr0 : 12288
  SAE Count : 0
  Inter-Core Inteference in Data Store : 0
-FILL
 Heartbeat CPU 0 instructions: 90000000 cycles: 85257890 heartbeat IPC: 0.953903 cumulative IPC: 1.05562 (Simulation time: 1 hr 6 min 44 sec) 
  Total Blocks : 196608 Invalid Blocks : 103603 Valid Blocks : 93005
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 300211 Pr0 Tags : 98304 Pr1 Tags : 93005 num_pr0 : 12288
@@ -202,7 +201,6 @@ Heartbeat CPU 0 instructions: 270000002 cycles: 1055448405 heartbeat IPC: 0.0806
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 267408 Pr0 Tags : 98304 Pr1 Tags : 125808 num_pr0 : 12288
  SAE Count : 0
  Inter-Core Inteference in Data Store : 0
-FILL
 Heartbeat CPU 0 instructions: 280000000 cycles: 1180708141 heartbeat IPC: 0.0798341 cumulative IPC: 0.0809252 (Simulation time: 5 hr 3 min 25 sec) 
  Total Blocks : 196608 Invalid Blocks : 70165 Valid Blocks : 126443
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 266773 Pr0 Tags : 98304 Pr1 Tags : 126443 num_pr0 : 12288

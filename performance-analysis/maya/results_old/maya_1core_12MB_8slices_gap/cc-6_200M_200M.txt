@@ -166,7 +166,6 @@ Heartbeat CPU 0 instructions: 200000000 cycles: 239100219 heartbeat IPC: 0.85451
 
 Warmup complete CPU 0 instructions: 200000004 cycles: 239100220 (Simulation time: 0 hr 54 min 7 sec) 
 
-FILL
 Heartbeat CPU 0 instructions: 210000001 cycles: 279206278 heartbeat IPC: 0.249339 cumulative IPC: 0.249339 (Simulation time: 1 hr 0 min 7 sec) 
  Total Blocks : 196608 Invalid Blocks : 118806 Valid Blocks : 77802
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 315415 Pr0 Tags : 98303 Pr1 Tags : 77802 num_pr0 : 12288

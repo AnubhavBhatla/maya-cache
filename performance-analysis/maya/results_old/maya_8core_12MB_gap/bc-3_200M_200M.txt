@@ -133,7 +133,6 @@ Initialize Hawkeye state
 Initialize Hawkeye state
 Initialize Hawkeye state
 Initialize Hawkeye state
-FILL
 Heartbeat CPU 0 instructions: 10000001 cycles: 7916668 heartbeat IPC: 1.26316 cumulative IPC: 1.26316 (Simulation time: 1 hr 2 min 52 sec) 
  Total Blocks : 196608 Invalid Blocks : 0 Valid Blocks : 196608
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 196610 Pr0 Tags : 98302 Pr1 Tags : 196608 num_pr0 : 12287
@@ -814,7 +813,6 @@ Heartbeat CPU 7 instructions: 170000000 cycles: 166690114 heartbeat IPC: 1.08072
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 196608 Pr0 Tags : 98304 Pr1 Tags : 196608 num_pr0 : 12288
  SAE Count : 0
  Inter-Core Inteference in Data Store : 77130198
-FILL
 Heartbeat CPU 0 instructions: 180000003 cycles: 175338616 heartbeat IPC: 1.10579 cumulative IPC: 1.02659 (Simulation time: 20 hr 56 min 1 sec) 
  Total Blocks : 196608 Invalid Blocks : 0 Valid Blocks : 196608
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 196608 Pr0 Tags : 98304 Pr1 Tags : 196608 num_pr0 : 12288
@@ -1505,7 +1503,6 @@ Heartbeat CPU 6 instructions: 340000002 cycles: 3069714850 heartbeat IPC: 0.0472
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 196609 Pr0 Tags : 98303 Pr1 Tags : 196608 num_pr0 : 12288
  SAE Count : 0
  Inter-Core Inteference in Data Store : 68163873
-FILL
 Heartbeat CPU 0 instructions: 350000001 cycles: 3272807652 heartbeat IPC: 0.0472084 cumulative IPC: 0.0485434 (Simulation time: 135 hr 13 min 8 sec) 
  Total Blocks : 196608 Invalid Blocks : 0 Valid Blocks : 196608
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 196608 Pr0 Tags : 98304 Pr1 Tags : 196608 num_pr0 : 12288
@@ -1546,7 +1543,6 @@ Heartbeat CPU 6 instructions: 350000001 cycles: 3281981494 heartbeat IPC: 0.0471
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 196609 Pr0 Tags : 98303 Pr1 Tags : 196608 num_pr0 : 12288
  SAE Count : 0
  Inter-Core Inteference in Data Store : 72814866
-FILL
 Heartbeat CPU 0 instructions: 360000000 cycles: 3467310244 heartbeat IPC: 0.0514132 cumulative IPC: 0.0487139 (Simulation time: 137 hr 47 min 50 sec) 
  Total Blocks : 196608 Invalid Blocks : 0 Valid Blocks : 196608
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 196608 Pr0 Tags : 98304 Pr1 Tags : 196608 num_pr0 : 12288

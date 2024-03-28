@@ -133,7 +133,6 @@ Initialize Hawkeye state
 Initialize Hawkeye state
 Initialize Hawkeye state
 Initialize Hawkeye state
-FILL
 Heartbeat CPU 0 instructions: 10000000 cycles: 12100877 heartbeat IPC: 0.826386 cumulative IPC: 0.826386 (Simulation time: 1 hr 1 min 37 sec) 
  Total Blocks : 196608 Invalid Blocks : 0 Valid Blocks : 196608
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 196612 Pr0 Tags : 98300 Pr1 Tags : 196608 num_pr0 : 12288
@@ -1064,7 +1063,6 @@ Heartbeat CPU 7 instructions: 230000000 cycles: 989140990 heartbeat IPC: 0.04068
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 196608 Pr0 Tags : 98304 Pr1 Tags : 196608 num_pr0 : 12288
  SAE Count : 0
  Inter-Core Inteference in Data Store : 14599739
-FILL
 Heartbeat CPU 0 instructions: 240000001 cycles: 1228254160 heartbeat IPC: 0.040743 cumulative IPC: 0.0407557 (Simulation time: 30 hr 36 min 41 sec) 
  Total Blocks : 196608 Invalid Blocks : 0 Valid Blocks : 196608
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 196609 Pr0 Tags : 98303 Pr1 Tags : 196608 num_pr0 : 12288
@@ -1465,7 +1463,6 @@ Heartbeat CPU 7 instructions: 330000000 cycles: 3252844962 heartbeat IPC: 0.0715
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 196608 Pr0 Tags : 98304 Pr1 Tags : 196608 num_pr0 : 12288
  SAE Count : 0
  Inter-Core Inteference in Data Store : 64652077
-FILL
 Heartbeat CPU 0 instructions: 340000001 cycles: 3386701754 heartbeat IPC: 0.0708733 cumulative IPC: 0.0445954 (Simulation time: 141 hr 27 min 45 sec) 
  Total Blocks : 196608 Invalid Blocks : 0 Valid Blocks : 196608
  Total Tags : 491520 Threshold : 12288 Invalid Tags : 196608 Pr0 Tags : 98304 Pr1 Tags : 196608 num_pr0 : 12288
