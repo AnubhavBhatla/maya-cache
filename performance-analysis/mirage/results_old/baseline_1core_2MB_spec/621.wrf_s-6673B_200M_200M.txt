@@ -1,0 +1,239 @@
+
+*** ChampSim Multicore Out-of-Order Simulator ***
+
+Warmup Instructions: 200000000
+Simulation Instructions: 200000000
+Number of CPUs: 1
+threads:1
+
+L1I Configuration:
+L1I_SET:64
+L1I_WAY:8
+L1I_RQ_SIZE:64
+L1I_WQ_SIZE:64
+L1I_PQ_SIZE:8
+L1I_MSHR_SIZE:8
+
+L1D Configuration:
+L1D_SET:64
+L1D_WAY:12
+L1D_RQ_SIZE:64
+L1D_WQ_SIZE:64
+L1D_PQ_SIZE:8
+L1D_MSHR_SIZE:16
+
+L2C Configuration:
+L2C_SET:1024
+L2C_WAY:8
+L2C_RQ_SIZE:32
+L2C_WQ_SIZE:32
+L2C_PQ_SIZE:16
+L2C_MSHR_SIZE:32
+
+LLC Configuration:
+LLC_SET:2048
+LLC_WAY:16
+LLC SLICES:1
+LLC_RQ_SIZE:64
+LLC_WQ_SIZE:64
+LLC_PQ_SIZE:32
+LLC_MSHR_SIZE:64
+
+Interconnect OFF
+Attacker deprioritize is: OFF
+Off-chip DRAM Size: 4096 MB Channels: 1 Width: 64-bit Data Rate: 3200 MT/s
+PAGE SIZE in KB: 4.000000 
+PAGE SIZE in MB: 0.003906 
+PAGE offset in bits: 12 
+CEASER-S_LLC:0
+MIRAGE : 0
+CEASER_LATENCY:3
+REMAP : OFF
+Partitions : 1
+Multi-Step : OFF
+BFS : OFF
+
+CPU 0 runs /home/anubhav/spec_2017/621.wrf_s-6673B.champsimtrace.xz
+CPU 0 Bimodal branch predictor
+Initialize SRRIP state
+Heartbeat CPU 0 instructions: 10000001 cycles: 5659850 heartbeat IPC: 1.76683 cumulative IPC: 1.76683 (Simulation time: 0 hr 2 min 4 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 20000002 cycles: 9646689 heartbeat IPC: 2.50825 cumulative IPC: 2.07325 (Simulation time: 0 hr 3 min 53 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 30000001 cycles: 13269652 heartbeat IPC: 2.76017 cumulative IPC: 2.2608 (Simulation time: 0 hr 5 min 59 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 40000002 cycles: 17335265 heartbeat IPC: 2.45965 cumulative IPC: 2.30744 (Simulation time: 0 hr 10 min 25 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 50000001 cycles: 21322796 heartbeat IPC: 2.50782 cumulative IPC: 2.34491 (Simulation time: 0 hr 15 min 7 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 60000000 cycles: 26175360 heartbeat IPC: 2.06077 cumulative IPC: 2.29223 (Simulation time: 0 hr 20 min 8 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 70000003 cycles: 30713495 heartbeat IPC: 2.20355 cumulative IPC: 2.27913 (Simulation time: 0 hr 24 min 58 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 80000000 cycles: 35119501 heartbeat IPC: 2.26963 cumulative IPC: 2.27794 (Simulation time: 0 hr 29 min 21 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 90000002 cycles: 39865633 heartbeat IPC: 2.10698 cumulative IPC: 2.25758 (Simulation time: 0 hr 34 min 20 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 100000000 cycles: 44458675 heartbeat IPC: 2.17721 cumulative IPC: 2.24928 (Simulation time: 0 hr 39 min 11 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 110000000 cycles: 48994191 heartbeat IPC: 2.20482 cumulative IPC: 2.24516 (Simulation time: 0 hr 44 min 46 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 120000002 cycles: 53532029 heartbeat IPC: 2.20369 cumulative IPC: 2.24165 (Simulation time: 0 hr 49 min 57 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 130000001 cycles: 57994040 heartbeat IPC: 2.24114 cumulative IPC: 2.24161 (Simulation time: 0 hr 55 min 19 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 140000003 cycles: 62574907 heartbeat IPC: 2.18299 cumulative IPC: 2.23732 (Simulation time: 1 hr 0 min 17 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 150000000 cycles: 67026870 heartbeat IPC: 2.2462 cumulative IPC: 2.23791 (Simulation time: 1 hr 5 min 17 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 160000000 cycles: 71586730 heartbeat IPC: 2.19305 cumulative IPC: 2.23505 (Simulation time: 1 hr 10 min 23 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 170000000 cycles: 76118665 heartbeat IPC: 2.20656 cumulative IPC: 2.23336 (Simulation time: 1 hr 15 min 15 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 180000001 cycles: 80589886 heartbeat IPC: 2.23653 cumulative IPC: 2.23353 (Simulation time: 1 hr 20 min 10 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 190000002 cycles: 85255760 heartbeat IPC: 2.14322 cumulative IPC: 2.22859 (Simulation time: 1 hr 24 min 56 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 200000002 cycles: 90187633 heartbeat IPC: 2.02763 cumulative IPC: 2.2176 (Simulation time: 1 hr 30 min 1 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+
+Warmup complete CPU 0 instructions: 200000002 cycles: 90187633 (Simulation time: 1 hr 30 min 1 sec) 
+
+Heartbeat CPU 0 instructions: 210000003 cycles: 105819308 heartbeat IPC: 0.639727 cumulative IPC: 0.639727 (Simulation time: 1 hr 38 min 17 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 220000000 cycles: 121508635 heartbeat IPC: 0.637376 cumulative IPC: 0.638549 (Simulation time: 1 hr 46 min 38 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 230000000 cycles: 140959375 heartbeat IPC: 0.514119 cumulative IPC: 0.59088 (Simulation time: 1 hr 54 min 27 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 240000000 cycles: 161201209 heartbeat IPC: 0.494026 cumulative IPC: 0.563273 (Simulation time: 2 hr 3 min 3 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 250000003 cycles: 171921473 heartbeat IPC: 0.932813 cumulative IPC: 0.611742 (Simulation time: 2 hr 9 min 47 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 260000000 cycles: 182892724 heartbeat IPC: 0.911473 cumulative IPC: 0.647214 (Simulation time: 2 hr 16 min 28 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 270000000 cycles: 193215681 heartbeat IPC: 0.968715 cumulative IPC: 0.679427 (Simulation time: 2 hr 23 min 2 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 280000003 cycles: 203356280 heartbeat IPC: 0.986135 cumulative IPC: 0.70691 (Simulation time: 2 hr 29 min 31 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 290000003 cycles: 213698643 heartbeat IPC: 0.966897 cumulative IPC: 0.72868 (Simulation time: 2 hr 36 min 17 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 300000003 cycles: 227110993 heartbeat IPC: 0.745582 cumulative IPC: 0.730336 (Simulation time: 2 hr 43 min 17 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 310000000 cycles: 250949752 heartbeat IPC: 0.419485 cumulative IPC: 0.684241 (Simulation time: 2 hr 52 min 28 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 320000003 cycles: 269035901 heartbeat IPC: 0.552909 cumulative IPC: 0.67096 (Simulation time: 3 hr 0 min 50 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 330000000 cycles: 288342831 heartbeat IPC: 0.517949 cumulative IPC: 0.656051 (Simulation time: 3 hr 8 min 37 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 340000002 cycles: 307681876 heartbeat IPC: 0.517089 cumulative IPC: 0.643695 (Simulation time: 3 hr 15 min 31 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 350000001 cycles: 333343359 heartbeat IPC: 0.389689 cumulative IPC: 0.616889 (Simulation time: 3 hr 24 min 58 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 360000000 cycles: 352111072 heartbeat IPC: 0.53283 cumulative IPC: 0.610866 (Simulation time: 3 hr 32 min 16 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 370000003 cycles: 370898865 heartbeat IPC: 0.532261 cumulative IPC: 0.605605 (Simulation time: 3 hr 39 min 11 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 380000001 cycles: 393058783 heartbeat IPC: 0.451265 cumulative IPC: 0.594312 (Simulation time: 3 hr 46 min 46 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 390000000 cycles: 411881020 heartbeat IPC: 0.531286 cumulative IPC: 0.590625 (Simulation time: 3 hr 53 min 6 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 400000000 cycles: 431136942 heartbeat IPC: 0.519321 cumulative IPC: 0.586597 (Simulation time: 3 hr 59 min 50 sec) 
+ Total Blocks : 32768 Invalid Blocks : 0
+Finished CPU 0 instructions: 200000002 cycles: 340949310 cumulative IPC: 0.586597 (Simulation time: 3 hr 59 min 50 sec) 
+
+CPU 0 Branch Prediction Accuracy: 96.739% MPKI: 1.7301 Average ROB Occupancy at Mispredict: 242.495
+
+ChampSim completed all CPUs
+
+Region of Interest Statistics
+
+CPU 0 cumulative IPC: 0.586597 instructions: 200000002 cycles: 340949310
+ITLB TOTAL     ACCESS: 35760053  HIT: 35759831  MISS:   222  HIT %: 99.9994  MISS %: 0.000620804  AVERAGE MISS PENALTY: 129.685
+ITLB LOAD      ACCESS: 35760053  HIT: 35759831  MISS:   222  HIT %: 99.9994  MISS %: 0.000620804  AVERAGE MISS PENALTY: 129.685
+ITLB RFO       ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+ITLB PREFETCH  ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+ITLB WRITEBACK ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+ITLB PREFETCH  REQUESTED:     0  ISSUED:     0  USEFUL:     0  USELESS:     0
+ USEFUL LOAD PREFETCHES:          0 PREFETCH ISSUED TO LOWER LEVEL:          0  ACCURACY: -nan
+ TIMELY PREFETCHES:          0 LATE PREFETCHES: 0 DROPPED PREFETCHES: 0
+ITLB AVERAGE MISS LATENCY: 129.685 cycles
+DTLB TOTAL     ACCESS: 49678739  HIT: 49520454  MISS: 158285  HIT %: 99.6814  MISS %: 0.318617  AVERAGE MISS PENALTY: 35.1719
+DTLB LOAD      ACCESS: 43991678  HIT: 43855319  MISS: 136359  HIT %: 99.69  MISS %: 0.309965  AVERAGE MISS PENALTY: 34.5498
+DTLB RFO       ACCESS: 5687061  HIT: 5665135  MISS: 21926  HIT %: 99.6145  MISS %: 0.385542  AVERAGE MISS PENALTY: 39.0403
+DTLB PREFETCH  ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+DTLB WRITEBACK ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+DTLB PREFETCH  REQUESTED:     0  ISSUED:     0  USEFUL:     0  USELESS:     0
+ USEFUL LOAD PREFETCHES:          0 PREFETCH ISSUED TO LOWER LEVEL:          0  ACCURACY: -nan
+ TIMELY PREFETCHES:          0 LATE PREFETCHES: 0 DROPPED PREFETCHES: 0
+DTLB AVERAGE MISS LATENCY: 35.1719 cycles
+STLB TOTAL     ACCESS: 158507  HIT: 128711  MISS: 29796  HIT %: 81.2021  MISS %: 18.7979  AVERAGE MISS PENALTY: 100
+STLB LOAD      ACCESS: 136581  HIT: 112954  MISS: 23627  HIT %: 82.7011  MISS %: 17.2989  AVERAGE MISS PENALTY: 100
+STLB RFO       ACCESS: 21926  HIT: 15757  MISS:  6169  HIT %: 71.8645  MISS %: 28.1355  AVERAGE MISS PENALTY: 100
+STLB PREFETCH  ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+STLB WRITEBACK ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+STLB PREFETCH  REQUESTED:     0  ISSUED:     0  USEFUL:     0  USELESS:     0
+ USEFUL LOAD PREFETCHES:          0 PREFETCH ISSUED TO LOWER LEVEL:          0  ACCURACY: -nan
+ TIMELY PREFETCHES:          0 LATE PREFETCHES: 0 DROPPED PREFETCHES: 0
+STLB AVERAGE MISS LATENCY: 100 cycles
+L1D TOTAL     ACCESS: 46602562  HIT: 42719295  MISS: 3883267  HIT %: 91.6673  MISS %: 8.33273  AVERAGE MISS PENALTY: 192.219
+L1D LOAD      ACCESS: 38401729  HIT: 35092797  MISS: 3308932  HIT %: 91.3834  MISS %: 8.61662  AVERAGE MISS PENALTY: 177.518
+L1D RFO       ACCESS: 8200833  HIT: 7626498  MISS: 574335  HIT %: 92.9966  MISS %: 7.00337  AVERAGE MISS PENALTY: 276.912
+L1D PREFETCH  ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+L1D WRITEBACK ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+L1D PREFETCH  REQUESTED:     0  ISSUED:     0  USEFUL:     0  USELESS:     0
+ USEFUL LOAD PREFETCHES:          0 PREFETCH ISSUED TO LOWER LEVEL:          0  ACCURACY: -nan
+ TIMELY PREFETCHES:          0 LATE PREFETCHES: 0 DROPPED PREFETCHES: 0
+L1D AVERAGE MISS LATENCY: 192.219 cycles
+L1I TOTAL     ACCESS: 46203074  HIT: 46196482  MISS:  6592  HIT %: 99.9857  MISS %: 0.0142674  AVERAGE MISS PENALTY: 235.79
+L1I LOAD      ACCESS: 46203074  HIT: 46196482  MISS:  6592  HIT %: 99.9857  MISS %: 0.0142674  AVERAGE MISS PENALTY: 235.79
+L1I RFO       ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+L1I PREFETCH  ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+L1I WRITEBACK ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+L1I PREFETCH  REQUESTED:     0  ISSUED:     0  USEFUL:     0  USELESS:     0
+ USEFUL LOAD PREFETCHES:          0 PREFETCH ISSUED TO LOWER LEVEL:          0  ACCURACY: -nan
+ TIMELY PREFETCHES:          0 LATE PREFETCHES: 0 DROPPED PREFETCHES: 0
+L1I AVERAGE MISS LATENCY: 235.79 cycles
+L2C TOTAL     ACCESS: 5161864  HIT: 2346110  MISS: 2815754  HIT %: 45.4508  MISS %: 54.5492  AVERAGE MISS PENALTY: 243.907
+L2C LOAD      ACCESS: 3315444  HIT: 924195  MISS: 2391249  HIT %: 27.8755  MISS %: 72.1245  AVERAGE MISS PENALTY: 224.444
+L2C RFO       ACCESS: 574332  HIT: 151424  MISS: 422908  HIT %: 26.3652  MISS %: 73.6348  AVERAGE MISS PENALTY: 354.882
+L2C PREFETCH  ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+L2C WRITEBACK ACCESS: 1272088  HIT: 1270491  MISS:  1597  HIT %: 99.8745  MISS %: 0.125542  AVERAGE MISS PENALTY: 0
+L2C PREFETCH  REQUESTED:     0  ISSUED:     0  USEFUL:     0  USELESS:     0
+ USEFUL LOAD PREFETCHES:          0 PREFETCH ISSUED TO LOWER LEVEL:          0  ACCURACY: -nan
+ TIMELY PREFETCHES:          0 LATE PREFETCHES: 0 DROPPED PREFETCHES: 0
+L2C AVERAGE MISS LATENCY: 243.907 cycles
+LLC0 TOTAL     ACCESS: 3803646  HIT: 1203537  MISS: 2600109  HIT %: 31.6417  MISS %: 68.3583  AVERAGE MISS PENALTY: 226.856
+LLC0 LOAD      ACCESS: 2391249  HIT: 293278  MISS: 2097971  HIT %: 12.2646  MISS %: 87.7354  AVERAGE MISS PENALTY: 216.707
+LLC0 RFO       ACCESS: 422908  HIT:  7999  MISS: 414909  HIT %: 1.89143  MISS %: 98.1086  AVERAGE MISS PENALTY: 325.869
+LLC0 PREFETCH  ACCESS:     0  HIT:     0  MISS:     0  HIT %:     0  MISS %:     0  AVERAGE MISS PENALTY: 0
+LLC0 WRITEBACK ACCESS: 989489  HIT: 902260  MISS: 87229  HIT %: 91.1844  MISS %: 8.81556  AVERAGE MISS PENALTY: 0
+LLC0 PREFETCH  REQUESTED:     0  ISSUED:     0  USEFUL:     0  USELESS:     0
+ USEFUL LOAD PREFETCHES:          0 PREFETCH ISSUED TO LOWER LEVEL:          0  ACCURACY: -nan
+ TIMELY PREFETCHES:          0 LATE PREFETCHES: 0 DROPPED PREFETCHES: 0
+LLC0 AVERAGE MISS LATENCY: 226.856 cycles
+Deadblocks : 1919680 Deadblock percentage : 91.5017
+
+ROI Average ROB Stall Cycles:	11.8958
+ROI Total ROB Stalls Cycles:	294768809
+ROI TOTAL ROB counter      :	24779217
+ROI Average Load ROB Stall Cycles:	51.7593
+ROI Total Load ROB Stalls Cycle  :	196097569
+ROI Total Load ROB stalls Counter:	3788647
+Major fault: 0 Minor fault: 10640
+Interconnect Stats 
+LINK 0 BW : 0
+DRAM Statistics
+ CHANNEL 0
+ RQ ROW_BUFFER_HIT: 624750  ROW_BUFFER_MISS: 1888047
+ DBUS_CONGESTED: 944526
+ WQ ROW_BUFFER_HIT: 332343  ROW_BUFFER_MISS: 492840  FULL:   196
+
+ AVG_CONGESTED_CYCLE: 6
+DRAM PAGES: 1048576
+Allocated PAGES: 10640
+L2C destructor called
+L1D destructor called
+L1I destructor called
+STLB destructor called
+DTLB destructor called
+ITLB destructor called

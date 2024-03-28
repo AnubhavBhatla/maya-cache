@@ -1,0 +1,199 @@
+
+*** ChampSim Multicore Out-of-Order Simulator ***
+
+Warmup Instructions: 200000000
+Simulation Instructions: 200000000
+Number of CPUs: 8
+threads:1
+
+L1I Configuration:
+L1I_SET:64
+L1I_WAY:8
+L1I_RQ_SIZE:64
+L1I_WQ_SIZE:64
+L1I_PQ_SIZE:8
+L1I_MSHR_SIZE:8
+
+L1D Configuration:
+L1D_SET:64
+L1D_WAY:12
+L1D_RQ_SIZE:64
+L1D_WQ_SIZE:64
+L1D_PQ_SIZE:8
+L1D_MSHR_SIZE:16
+
+L2C Configuration:
+L2C_SET:1024
+L2C_WAY:8
+L2C_RQ_SIZE:32
+L2C_WQ_SIZE:32
+L2C_PQ_SIZE:16
+L2C_MSHR_SIZE:32
+
+LLC Configuration:
+LLC_SET:2048
+LLC_WAY:16
+LLC SLICES:8
+LLC_RQ_SIZE:64
+LLC_WQ_SIZE:64
+LLC_PQ_SIZE:32
+LLC_MSHR_SIZE:64
+
+Interconnect OFF
+Attacker deprioritize is: OFF
+Off-chip DRAM Size: 8192 MB Channels: 2 Width: 64-bit Data Rate: 3200 MT/s
+PAGE SIZE in KB: 4.000000 
+PAGE SIZE in MB: 0.003906 
+PAGE offset in bits: 12 
+CEASER-S_LLC:0
+MIRAGE : 1
+CEASER_LATENCY:3
+REMAP : OFF
+Partitions : 1
+Multi-Step : OFF
+BFS : OFF
+
+CPU 0 runs /home/anubhav/spec_2017/605.mcf_s-994B.champsimtrace.xz
+CPU 1 runs /home/anubhav/spec_2017/605.mcf_s-994B.champsimtrace.xz
+CPU 2 runs /home/anubhav/spec_2017/605.mcf_s-994B.champsimtrace.xz
+CPU 3 runs /home/anubhav/spec_2017/605.mcf_s-994B.champsimtrace.xz
+CPU 4 runs /home/anubhav/spec_2017/605.mcf_s-994B.champsimtrace.xz
+CPU 5 runs /home/anubhav/spec_2017/605.mcf_s-994B.champsimtrace.xz
+CPU 6 runs /home/anubhav/spec_2017/605.mcf_s-994B.champsimtrace.xz
+CPU 7 runs /home/anubhav/spec_2017/605.mcf_s-994B.champsimtrace.xz
+CPU 0 Bimodal branch predictor
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+CPU 1 Bimodal branch predictor
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+CPU 2 Bimodal branch predictor
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+CPU 3 Bimodal branch predictor
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+CPU 4 Bimodal branch predictor
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+CPU 5 Bimodal branch predictor
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+CPU 6 Bimodal branch predictor
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+CPU 7 Bimodal branch predictor
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Initialize Hawkeye state
+Heartbeat CPU 1 instructions: 10000000 cycles: 8106833 heartbeat IPC: 1.23353 cumulative IPC: 1.23353 (Simulation time: 1 hr 17 min 16 sec) 
+ Total Blocks : 262144 Invalid Blocks : 1822
+Heartbeat CPU 0 instructions: 10000000 cycles: 8106939 heartbeat IPC: 1.23351 cumulative IPC: 1.23351 (Simulation time: 1 hr 17 min 16 sec) 
+ Total Blocks : 262144 Invalid Blocks : 1822
+Heartbeat CPU 3 instructions: 10000000 cycles: 8107057 heartbeat IPC: 1.23349 cumulative IPC: 1.23349 (Simulation time: 1 hr 17 min 16 sec) 
+ Total Blocks : 262144 Invalid Blocks : 1822
+Heartbeat CPU 2 instructions: 10000000 cycles: 8107068 heartbeat IPC: 1.23349 cumulative IPC: 1.23349 (Simulation time: 1 hr 17 min 16 sec) 
+ Total Blocks : 262144 Invalid Blocks : 1822
+Heartbeat CPU 4 instructions: 10000000 cycles: 8107269 heartbeat IPC: 1.23346 cumulative IPC: 1.23346 (Simulation time: 1 hr 17 min 16 sec) 
+ Total Blocks : 262144 Invalid Blocks : 1822
+Heartbeat CPU 7 instructions: 10000000 cycles: 8107297 heartbeat IPC: 1.23346 cumulative IPC: 1.23346 (Simulation time: 1 hr 17 min 16 sec) 
+ Total Blocks : 262144 Invalid Blocks : 1822
+Heartbeat CPU 6 instructions: 10000000 cycles: 8107502 heartbeat IPC: 1.23343 cumulative IPC: 1.23343 (Simulation time: 1 hr 17 min 16 sec) 
+ Total Blocks : 262144 Invalid Blocks : 1822
+Heartbeat CPU 5 instructions: 10000000 cycles: 8107591 heartbeat IPC: 1.23341 cumulative IPC: 1.23341 (Simulation time: 1 hr 17 min 16 sec) 
+ Total Blocks : 262144 Invalid Blocks : 1822
+Heartbeat CPU 0 instructions: 20000002 cycles: 16370686 heartbeat IPC: 1.21011 cumulative IPC: 1.2217 (Simulation time: 5 hr 29 min 44 sec) 
+ Total Blocks : 262144 Invalid Blocks : 5
+Heartbeat CPU 1 instructions: 20000002 cycles: 16370867 heartbeat IPC: 1.21006 cumulative IPC: 1.22168 (Simulation time: 5 hr 29 min 44 sec) 
+ Total Blocks : 262144 Invalid Blocks : 5
+Heartbeat CPU 2 instructions: 20000002 cycles: 16371125 heartbeat IPC: 1.21006 cumulative IPC: 1.22166 (Simulation time: 5 hr 29 min 44 sec) 
+ Total Blocks : 262144 Invalid Blocks : 5
+Heartbeat CPU 3 instructions: 20000002 cycles: 16371466 heartbeat IPC: 1.21001 cumulative IPC: 1.22164 (Simulation time: 5 hr 29 min 44 sec) 
+ Total Blocks : 262144 Invalid Blocks : 5
+Heartbeat CPU 4 instructions: 20000002 cycles: 16371882 heartbeat IPC: 1.20998 cumulative IPC: 1.22161 (Simulation time: 5 hr 29 min 44 sec) 
+ Total Blocks : 262144 Invalid Blocks : 5
+Heartbeat CPU 6 instructions: 20000002 cycles: 16372423 heartbeat IPC: 1.20993 cumulative IPC: 1.22157 (Simulation time: 5 hr 29 min 45 sec) 
+ Total Blocks : 262144 Invalid Blocks : 5
+Heartbeat CPU 7 instructions: 20000002 cycles: 16372464 heartbeat IPC: 1.2099 cumulative IPC: 1.22156 (Simulation time: 5 hr 29 min 45 sec) 
+ Total Blocks : 262144 Invalid Blocks : 5
+Heartbeat CPU 5 instructions: 20000002 cycles: 16372527 heartbeat IPC: 1.20993 cumulative IPC: 1.22156 (Simulation time: 5 hr 29 min 45 sec) 
+ Total Blocks : 262144 Invalid Blocks : 5
+Heartbeat CPU 0 instructions: 30000000 cycles: 24936157 heartbeat IPC: 1.16748 cumulative IPC: 1.20307 (Simulation time: 17 hr 3 min 38 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 1 instructions: 30000000 cycles: 24936609 heartbeat IPC: 1.16744 cumulative IPC: 1.20305 (Simulation time: 17 hr 3 min 38 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 2 instructions: 30000000 cycles: 24937090 heartbeat IPC: 1.16741 cumulative IPC: 1.20303 (Simulation time: 17 hr 3 min 38 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 3 instructions: 30000000 cycles: 24937438 heartbeat IPC: 1.16741 cumulative IPC: 1.20301 (Simulation time: 17 hr 3 min 38 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 4 instructions: 30000000 cycles: 24938101 heartbeat IPC: 1.16738 cumulative IPC: 1.20298 (Simulation time: 17 hr 3 min 38 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 6 instructions: 30000000 cycles: 24938596 heartbeat IPC: 1.16738 cumulative IPC: 1.20295 (Simulation time: 17 hr 3 min 38 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 5 instructions: 30000000 cycles: 24938890 heartbeat IPC: 1.16736 cumulative IPC: 1.20294 (Simulation time: 17 hr 3 min 38 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 7 instructions: 30000000 cycles: 24938919 heartbeat IPC: 1.16734 cumulative IPC: 1.20294 (Simulation time: 17 hr 3 min 38 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 0 instructions: 40000000 cycles: 33354703 heartbeat IPC: 1.18785 cumulative IPC: 1.19923 (Simulation time: 17 hr 16 min 53 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 1 instructions: 40000000 cycles: 33355031 heartbeat IPC: 1.18787 cumulative IPC: 1.19922 (Simulation time: 17 hr 16 min 53 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 2 instructions: 40000000 cycles: 33355584 heartbeat IPC: 1.18786 cumulative IPC: 1.1992 (Simulation time: 17 hr 16 min 53 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 3 instructions: 40000000 cycles: 33356110 heartbeat IPC: 1.18784 cumulative IPC: 1.19918 (Simulation time: 17 hr 16 min 53 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 4 instructions: 40000000 cycles: 33356767 heartbeat IPC: 1.18784 cumulative IPC: 1.19916 (Simulation time: 17 hr 16 min 53 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 6 instructions: 40000000 cycles: 33357647 heartbeat IPC: 1.18778 cumulative IPC: 1.19913 (Simulation time: 17 hr 16 min 53 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 7 instructions: 40000000 cycles: 33357885 heartbeat IPC: 1.18779 cumulative IPC: 1.19912 (Simulation time: 17 hr 16 min 53 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
+Heartbeat CPU 5 instructions: 40000000 cycles: 33357900 heartbeat IPC: 1.18779 cumulative IPC: 1.19912 (Simulation time: 17 hr 16 min 53 sec) 
+ Total Blocks : 262144 Invalid Blocks : 0
