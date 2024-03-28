@@ -1,18 +1,9 @@
-Cache Configuration: 12 MB, 2 skews, 22 ways (11 ways/skew)
-AVG-BALLS-PER-BUCKET:11, BUCKET-SPILL-THRESHOLD:17 
-Simulation Parameters - BALL_THROWS:10000000000, SEED:42
+Cache Configuration: 12 MB, 2 skews, 18 ways (9 ways/skew)
+AVG-BALLS-PER-BUCKET:9, BUCKET-SPILL-THRESHOLD:13 
+Simulation Parameters - BALL_THROWS:1000000000, SEED:1
 
 Starting throws --  (Dot printed every 100M Ball throws) 
 .......... 1Bn
-.......... 2Bn
-.......... 3Bn
-.......... 4Bn
-.......... 5Bn
-.......... 6Bn
-.......... 7Bn
-.......... 8Bn
-.......... 9Bn
-.......... 10Bn
 
 
 Bucket-Occupancy Snapshot at End of Experiment
@@ -20,20 +11,20 @@ Bucket-Occupancy Snapshot at End of Experiment
 Occupancy: 		 Count
 Bucket[ 0 Fill]: 	 0 	 (0.00)
 Bucket[ 1 Fill]: 	 0 	 (0.00)
-Bucket[ 2 Fill]: 	 0 	 (0.00)
-Bucket[ 3 Fill]: 	 1 	 (0.00)
-Bucket[ 4 Fill]: 	 5 	 (0.02)
-Bucket[ 5 Fill]: 	 44 	 (0.13)
-Bucket[ 6 Fill]: 	 151 	 (0.46)
-Bucket[ 7 Fill]: 	 471 	 (1.44)
-Bucket[ 8 Fill]: 	 1265 	 (3.86)
-Bucket[ 9 Fill]: 	 2933 	 (8.95)
-Bucket[10 Fill]: 	 5775 	 (17.62)
-Bucket[11 Fill]: 	 8840 	 (26.98)
-Bucket[12 Fill]: 	 8704 	 (26.56)
-Bucket[13 Fill]: 	 4063 	 (12.40)
-Bucket[14 Fill]: 	 512 	 (1.56)
-Bucket[15 Fill]: 	 4 	 (0.01)
+Bucket[ 2 Fill]: 	 2 	 (0.01)
+Bucket[ 3 Fill]: 	 31 	 (0.09)
+Bucket[ 4 Fill]: 	 119 	 (0.36)
+Bucket[ 5 Fill]: 	 401 	 (1.22)
+Bucket[ 6 Fill]: 	 1123 	 (3.43)
+Bucket[ 7 Fill]: 	 2975 	 (9.08)
+Bucket[ 8 Fill]: 	 5943 	 (18.14)
+Bucket[ 9 Fill]: 	 9128 	 (27.86)
+Bucket[10 Fill]: 	 8847 	 (27.00)
+Bucket[11 Fill]: 	 3787 	 (11.56)
+Bucket[12 Fill]: 	 408 	 (1.25)
+Bucket[13 Fill]: 	 4 	 (0.01)
+Bucket[14 Fill]: 	 0 	 (0.00)
+Bucket[15 Fill]: 	 0 	 (0.00)
 Bucket[16 Fill]: 	 0 	 (0.00)
 Bucket[17 Fill]: 	 0 	 (0.00)
 Bucket[18 Fill]: 	 0 	 (0.00)
@@ -64,23 +55,23 @@ Bucket[40 Fill]: 	 0 	 (0.00)
 Distribution of Bucket-Occupancy (Averaged across Ball Throws) => Used for P(Bucket = k balls) calculation 
 
 Occupancy: 		            Count 	 P(Bucket=k balls)
-Bucket[ 0 Fill]: 	             1161 	 (0.000)
-Bucket[ 1 Fill]: 	            25177 	 (0.000)
-Bucket[ 2 Fill]: 	           277094 	 (0.001)
-Bucket[ 3 Fill]: 	          2028950 	 (0.005)
-Bucket[ 4 Fill]: 	         11148573 	 (0.028)
-Bucket[ 5 Fill]: 	         49022918 	 (0.123)
-Bucket[ 6 Fill]: 	        179526559 	 (0.449)
-Bucket[ 7 Fill]: 	        561985274 	 (1.405)
-Bucket[ 8 Fill]: 	       1525185472 	 (3.813)
-Bucket[ 9 Fill]: 	       3582192652 	 (8.955)
-Bucket[10 Fill]: 	       7069079889 	 (17.673)
-Bucket[11 Fill]: 	      10799619899 	 (26.999)
-Bucket[12 Fill]: 	      10701556635 	 (26.754)
-Bucket[13 Fill]: 	       4920928463 	 (12.302)
-Bucket[14 Fill]: 	        591259670 	 (1.478)
-Bucket[15 Fill]: 	          6554017 	 (0.016)
-Bucket[16 Fill]: 	              813 	 (0.000)
+Bucket[ 0 Fill]: 	             3194 	 (0.000)
+Bucket[ 1 Fill]: 	            56891 	 (0.001)
+Bucket[ 2 Fill]: 	           509870 	 (0.013)
+Bucket[ 3 Fill]: 	          3035958 	 (0.076)
+Bucket[ 4 Fill]: 	         13558957 	 (0.339)
+Bucket[ 5 Fill]: 	         48544850 	 (1.214)
+Bucket[ 6 Fill]: 	        143999774 	 (3.600)
+Bucket[ 7 Fill]: 	        357463133 	 (8.937)
+Bucket[ 8 Fill]: 	        726197062 	 (18.155)
+Bucket[ 9 Fill]: 	       1114773824 	 (27.869)
+Bucket[10 Fill]: 	       1078314551 	 (26.958)
+Bucket[11 Fill]: 	        464440403 	 (11.611)
+Bucket[12 Fill]: 	         49069960 	 (1.227)
+Bucket[13 Fill]: 	           424789 	 (0.011)
+Bucket[14 Fill]: 	                0 	 (0.000)
+Bucket[15 Fill]: 	                0 	 (0.000)
+Bucket[16 Fill]: 	                0 	 (0.000)
 Bucket[17 Fill]: 	                0 	 (0.000)
 Bucket[18 Fill]: 	                0 	 (0.000)
 Bucket[19 Fill]: 	                0 	 (0.000)
@@ -107,25 +98,25 @@ Bucket[39 Fill]: 	                0 	 (0.000)
 Bucket[40 Fill]: 	                0 	 (0.000)
 
 
-Distribution of Balls-in-Dest-Bucket on Ball-Insertion (Best-Of-2 Indexed-Buckets) => Spill-Count = Spills from Bucket-With-17-Balls
+Distribution of Balls-in-Dest-Bucket on Ball-Insertion (Best-Of-2 Indexed-Buckets) => Spill-Count = Spills from Bucket-With-13-Balls
 
 Balls-in-Dest-Bucket (k) 		 Spills from Bucket-With-k-Balls)
- 0:				             1156	 (0.000)
- 1:				            25131	 (0.000)
- 2:				           276781	 (0.001)
- 3:				          2026956	 (0.010)
- 4:				         11137237	 (0.056)
- 5:				         48945727	 (0.245)
- 6:				        178785805	 (0.894)
- 7:				        554574279	 (2.773)
- 8:				       1465393118	 (7.327)
- 9:				       3213166086	 (16.066)
-10:				       5399781836	 (26.999)
-11:				       5837258491	 (29.186)
-12:				       2907855672	 (14.539)
-13:				        376301515	 (1.882)
-14:				          4469657	 (0.022)
-15:				              553	 (0.000)
+ 0:				             3043	 (0.000)
+ 1:				            55172	 (0.003)
+ 2:				           500781	 (0.025)
+ 3:				          3003368	 (0.150)
+ 4:				         13466550	 (0.673)
+ 5:				         47980536	 (2.399)
+ 6:				        138985578	 (6.949)
+ 7:				        322719603	 (16.136)
+ 8:				        557329726	 (27.866)
+ 9:				        599064377	 (29.953)
+10:				        283873015	 (14.194)
+11:				         32711557	 (1.636)
+12:				           306673	 (0.015)
+13:				               21	 (0.000)
+14:				                0	 (0.000)
+15:				                0	 (0.000)
 16:				                0	 (0.000)
 17:				                0	 (0.000)
 18:				                0	 (0.000)
@@ -153,6 +144,6 @@ Balls-in-Dest-Bucket (k) 		 Spills from Bucket-With-k-Balls)
 
 
 
-Spill Count: 0 (0.000)
+Spill Count: 21 (0.000)
 
 Cuckoo Spill Count: 0 (0.000)
