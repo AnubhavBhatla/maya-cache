@@ -12,4 +12,4 @@ mv Fig10.pdf ../Fig10.pdf
 
 cd ..
 
-rm scripts/*.csv
+#rm scripts/*.csv

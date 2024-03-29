@@ -4,7 +4,7 @@ import pandas as pd
 import seaborn as sns; sns.set()
 import math
 from matplotlib.ticker import PercentFormatter
-
+import matplotlib.cm as cm
 from scipy.stats import gmean
 
 
@@ -136,18 +136,18 @@ avg_deadblock['Baseline'].append(np.mean(avg_deadblock['Baseline']))
 df_melted = pd.melt(pd.DataFrame(gmean_comp), id_vars=['Benchmarks'], var_name='Variable', value_name='Value')
 
 # Plot side-by-side bar plot
-plt.figure(figsize=(16, 10))
+plt.figure(figsize=(16, 5))
 # sns.set_style('white')
 # sns.set_palette('gray_r')
 # sns.barplot(data=df_melted, x='Benchmarks', y='Value', hue='Variable')
 
-width = 0.4       
+width = 0.3       
 
 # Plotting
-
+cmap = cm.get_cmap('Greys', 100)
 ind = np.arange(len(avg_deadblock['Benchmarks']))
-_ = plt.bar(ind , avg_deadblock['Baseline'] , width, label='Baseline', color = 'grey')
-_ = plt.bar(ind + width, avg_deadblock['Mirage'], width, label='Mirage', color = 'black')
+_ = plt.bar(ind , avg_deadblock['Baseline'] , width, label='Baseline', color = cmap(40), edgecolor = "black")
+_ = plt.bar(ind + width, avg_deadblock['Mirage'], width, label='Mirage', color = cmap(75), edgecolor = "black")
 plt.xticks(ind + width / 2, avg_deadblock['Benchmarks'])
 plt.title('Deadblockks')
 # plt.xlabel('Benchmarks')
@@ -162,8 +162,8 @@ plt.savefig('Fig1.pdf', format='pdf')
 
 plt.clf()
 ind = np.arange(len(gmean_comp['Benchmarks']))
-_ = plt.bar(ind + width, gmean_comp['Maya'] , width, label='Maya', color = 'black')
-_ = plt.bar(ind , gmean_comp['Mirage'], width, label='Mirage', color = 'grey')
+_ = plt.bar(ind + width, gmean_comp['Maya'] , width, label='Maya', color = cmap(75), edgecolor = "black")
+_ = plt.bar(ind , gmean_comp['Mirage'], width, label='Mirage', color = cmap(40), edgecolor = "black")
 plt.xticks(ind + width / 2, gmean_comp['Benchmarks'])
 plt.title('Performance')
 # plt.xlabel('Benchmarks')
