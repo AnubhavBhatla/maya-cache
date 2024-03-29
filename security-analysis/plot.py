@@ -9,7 +9,7 @@ matplotlib.ticker._mathdefault = lambda x: '\\mathdefault{%s}'%x
 
 
 #Set Font Size
-plt.rc('font', family='serif')
+#plt.rc('font', family='serif')
 plt.rc('font', size='12')
 plt.rc('axes',edgecolor='black')
 
@@ -41,7 +41,7 @@ ax.set_ylim(0.2,3*10**10)
 #grid
 ax.axis('on')
 #ax.legend(facecolor="white")
-ax.grid(color="grey")
+ax.yaxis.grid(color="light-grey")
 ax.set_facecolor("white")
 
 #Text
@@ -72,9 +72,9 @@ for N in range(12,16):
     p_N = Pr_df.at[N,'Pr_est(N)']
     Pr_df.at[N+1,'Pr_est(N)'] = 9/(N+1)*(p_N**2)
    
-print("------------------------------------------------")
-print (Pr_df)
-print("------------------------------------------------")
+#print("------------------------------------------------")
+#print (Pr_df)
+#print("------------------------------------------------")
 
 ##### PLOT RESULTS #########
 
@@ -112,7 +112,7 @@ ax1.set_yticks([1,10**-5,10**-10,10**-15,10**-20,10**-25,10**-30,10**-35])
 
 #grid
 ax1.axis('on')
-ax1.grid(color="grey")
+ax1.yaxis.grid(color="grey")
 ax1.set_facecolor("white")
 
 fig.savefig("Fig8.pdf",bbox_inches='tight',dpi=300)
