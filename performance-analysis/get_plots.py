@@ -11,14 +11,12 @@ from scipy.stats import gmean
 baseline_data = pd.read_csv("Homogeneous_weighted_speedup_BASELINE.csv")
 mirage_data = pd.read_csv("Homogeneous_weighted_speedup_MIRAGE.csv")
 maya_data = pd.read_csv("Homogeneous_weighted_speedup_MAYA.csv")
+deadblocks_data = pd.read_csv("Deadblocks.csv")
 
 maya_data.columns.values[0] = 'Benchmarks'
 mirage_data.columns.values[0] = 'Benchmarks'
 baseline_data.columns.values[0] = 'Benchmarks'
-
-
-
-
+deadblocks_data.columns.values[0] = 'Benchmarks'
 
 
 maya_norm = maya_data["Weighted speedup"]/baseline_data["Weighted speedup"]
@@ -32,6 +30,11 @@ last_bench = 'na'
 gmean_comp = {"Benchmarks" : [],
               'Mirage' : [],
               "Maya" : []
+              }
+
+avg_deadblock = {"Benchmarks" : [],
+              'Baseline' : [],
+              "Mirage" : []
               }
 
 count = 0
@@ -67,13 +70,46 @@ gmean_comp['Mirage'].append(gmean(gmean_list[1]))
 
 df_gmean_comp = pd.DataFrame(gmean_comp)
 df_gmean_comp.to_csv("gmean_comp.csv")
-print(df_gmean_comp)
+
+
+count = 0
+mean_list = [[], []]
+for i in deadblocks_data['Benchmarks']:
+    
+    start_index = i.find('.') + 1 
+    end_index = i.find('_' ) if i.find('_') > 1 else i.find('-')
+    bench = i[start_index:end_index]
+    
+    if bench != last_bench:
+        avg_deadblock['Benchmarks'].append(bench)
+        
+        
+        if count > 0:
+            
+            avg_deadblock['Baseline'].append(np.mean(mean_list[0]))
+            avg_deadblock['Mirage'].append(np.mean(mean_list[1]))
+            mean_list = [[], []]
+        mean_list[0].append(deadblocks_data.loc[deadblocks_data['Benchmarks'] == i, 'Baseline'].iloc[0])
+        mean_list[1].append(deadblocks_data.loc[deadblocks_data['Benchmarks'] == i, 'Mirage'].iloc[0])
+
+        count += 1
+        
+        
+    else:
+        mean_list[0].append(deadblocks_data.loc[deadblocks_data['Benchmarks'] == i, 'Baseline'].iloc[0])
+        mean_list[1].append(deadblocks_data.loc[deadblocks_data['Benchmarks'] == i, 'Mirage'].iloc[0])
+    last_bench = bench
+
+avg_deadblock['Baseline'].append(np.mean(mean_list[0]))
+avg_deadblock['Mirage'].append(np.mean(mean_list[1]))
+
+
 
 # Melt the DataFrame to have a single value column and a 'variable' column
 df_melted = pd.melt(pd.DataFrame(gmean_comp), id_vars=['Benchmarks'], var_name='Variable', value_name='Value')
 
 # Plot side-by-side bar plot
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(16, 8))
 # sns.set_style('white')
 # sns.set_palette('gray_r')
 # sns.barplot(data=df_melted, x='Benchmarks', y='Value', hue='Variable')
@@ -81,16 +117,35 @@ plt.figure(figsize=(10, 6))
 width = 0.3       
 
 # Plotting
+
+ind = np.arange(len(avg_deadblock['Benchmarks']))
+plt.bar(ind , avg_deadblock['Baseline'] , width, label='Baseline')
+plt.bar(ind + width, avg_deadblock['Mirage'], width, label='Mirage')
+plt.xticks(ind + width / 2, avg_deadblock['Benchmarks'])
+plt.title('Deadblockks')
+# plt.xlabel('Benchmarks')
+plt.ylabel('Percentage Deadblocks')
+# plt.tight_layout()
+plt.legend()
+plt.xticks(rotation=45)
+plt.grid(axis='x')
+
+plt.savefig('Deadblocks.pdf', format='pdf')
+
+
+plt.clf()
 ind = np.arange(len(df_gmean_comp))
 plt.bar(ind + width, gmean_comp['Maya'] , width, label='Maya')
 plt.bar(ind , gmean_comp['Mirage'], width, label='Mirage')
 plt.xticks(ind + width / 2, gmean_comp['Benchmarks'])
-plt.title('Side-by-Side Bar Plot')
-plt.xlabel('Benchmarks')
+plt.title('Performance')
+# plt.xlabel('Benchmarks')
 plt.ylabel('Values')
-plt.tight_layout()
+# plt.tight_layout()
 plt.ylim(.87, 1.2)
 plt.xticks(rotation=45)
 plt.grid(axis='x')
+
+plt.savefig('Performance_homogeneous.pdf', format='pdf')
 
 plt.show()

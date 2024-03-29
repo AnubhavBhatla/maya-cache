@@ -53,6 +53,7 @@ List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
 
 List_spec.sort()
+List_gap.sort()
 
 
 List_mod = List_spec.copy()
@@ -127,6 +128,7 @@ List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
 
 List_spec.sort()
+List_gap.sort()
 
 
 List_mod = List_spec.copy()
@@ -211,6 +213,7 @@ List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
 
 List_spec.sort()
+List_gap.sort()
 
 
 List_mod = List_spec.copy()
@@ -285,6 +288,7 @@ List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
 
 List_spec.sort()
+List_gap.sort()
 
 
 List_mod = List_spec.copy()
@@ -371,6 +375,7 @@ List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
 
 List_spec.sort()
+List_gap.sort()
 
 
 List_mod = List_spec.copy()
@@ -445,6 +450,7 @@ List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
 
 List_spec.sort()
+List_gap.sort()
 
 
 List_mod = List_spec.copy()
@@ -521,6 +527,153 @@ weighted_speedup_maya.transpose().to_csv("Homogeneous_weighted_speedup_BASELINE.
 
 
 
+###---------------------Get Deadblocks--------------------------------------------###############
 
+
+path_spec = "mirage/original_results/baseline_1core_2MB_spec"
+path_gap = "mirage/original_results/baseline_1core_2MB_gap"
+base_deadblocks = {}
+List_spec = os.listdir(path_spec)
+List_gap = os.listdir(path_gap)
+
+List_spec.sort()
+List_gap.sort()
+
+
+List_mod = List_spec.copy()
+for files in List_mod:
+    if(str(files[:-14]) in spec):
+        pass
+    else:
+        List_spec.remove(files)
+print(len(List_spec))
+
+
+List_mod = List_gap.copy()
+for files in List_mod:
+    if(str(files[:-14]) in gap):
+        pass
+    else:
+        List_gap.remove(files)
+print(len(List_gap))
+
+
+sorted_data = sorted(List_spec, key=get_number_between_dash_and_B)
+sorted_list_spec = sorted(sorted_data, key=get_first_three_digits)
+
+sorted_data = sorted(List_gap, key=get_number_between_dash_and_underscore)
+sorted_list_gap = sorted(sorted_data, key=get_first_two_digits)
+
+
+cwd = os.getcwd()
+lookup_dir = cwd + "/" +path_spec + "/" 
+for lists in [sorted_list_spec, sorted_list_gap]:
+
+    for file in lists:
+        # os.chdir(cwd + "/" + path)
+        ipc_List = []
+        try:
+            if (file in ignored_files):
+                pass
+            else:
+                
+                count = 0
+                with open(lookup_dir+file, 'r') as f:
+                    for line_number, line in enumerate(f, start=1):
+                        # Check if the phrase is present in the line
+                        if ("Deadblock percentage" in line):
+                            ipc_List.append(float(line.split()[6]))
+
+                f.close()
+                
+                base_deadblocks[file[:file.rfind('_200M_200', )]] = ipc_List
+
+
+        # Handle exceptions if the file doesn't exist or there's an error in reading it
+        except FileNotFoundError:
+            print("File not found.")
+        except IOError:
+            print("Error while reading the file.")
+    lookup_dir = cwd + "/" +path_gap + "/" 
+# print(ipc)
+df_base_deadblocks = pd.DataFrame(base_deadblocks, index = ['Baseline'])
+print(df_base_deadblocks.transpose().to_string())
+
+
+
+###-----------------------------Get Mirage Deadblocks-----------------------------###
+
+path_spec = "mirage/original_results/mirage_1core_2MB_spec"
+path_gap = "mirage/original_results/mirage_1core_2MB_gap"
+mirage_deadblocks = {}
+List_spec = os.listdir(path_spec)
+List_gap = os.listdir(path_gap)
+
+List_spec.sort()
+List_gap.sort()
+
+
+List_mod = List_spec.copy()
+for files in List_mod:
+    if(str(files[:-14]) in spec):
+        pass
+    else:
+        List_spec.remove(files)
+print(len(List_spec))
+
+
+List_mod = List_gap.copy()
+for files in List_mod:
+    if(str(files[:-14]) in gap):
+        pass
+    else:
+        List_gap.remove(files)
+print(len(List_gap))
+
+
+sorted_data = sorted(List_spec, key=get_number_between_dash_and_B)
+sorted_list_spec = sorted(sorted_data, key=get_first_three_digits)
+
+sorted_data = sorted(List_gap, key=get_number_between_dash_and_underscore)
+sorted_list_gap = sorted(sorted_data, key=get_first_two_digits)
+
+
+cwd = os.getcwd()
+lookup_dir = cwd + "/" +path_spec + "/" 
+for lists in [sorted_list_spec, sorted_list_gap]:
+
+    for file in lists:
+        # os.chdir(cwd + "/" + path)
+        ipc_List = []
+        try:
+            if (file in ignored_files):
+                pass
+            else:
+                
+                count = 0
+                with open(lookup_dir+file, 'r') as f:
+                    for line_number, line in enumerate(f, start=1):
+                        # Check if the phrase is present in the line
+                        if ("Deadblock percentage" in line):
+                            ipc_List.append(float(line.split()[6]))
+
+                f.close()
+                
+                mirage_deadblocks[file[:file.rfind('_200M_200', )]] = ipc_List
+
+
+        # Handle exceptions if the file doesn't exist or there's an error in reading it
+        except FileNotFoundError:
+            print("File not found.")
+        except IOError:
+            print("Error while reading the file.")
+    lookup_dir = cwd + "/" +path_gap + "/" 
+# print(ipc)
+df_mirage_deadblocks = pd.DataFrame(mirage_deadblocks, index=["Mirage"])
+
+
+df_deadblocks = pd.concat([df_base_deadblocks, df_mirage_deadblocks])
+print(df_deadblocks.transpose().to_string())
+df_deadblocks.transpose().to_csv("Deadblocks.csv")
 
 
