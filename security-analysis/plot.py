@@ -11,6 +11,7 @@ matplotlib.ticker._mathdefault = lambda x: '\\mathdefault{%s}'%x
 #Set Font Size
 plt.rc('font', family='serif')
 plt.rc('font', size='12')
+plt.rc('axes',edgecolor='black')
 
 df = pd.read_csv("results/base/maya6ways.Spills.stat", delimiter='\s+')
 
@@ -19,20 +20,19 @@ id=len(df)+1
 df.at[id, 'ExtraWaysPerSkew'] = 0
 df.at[id, 'Trials/Spill'] = 1
 
-fig = plt.figure(figsize=(5.5,2.5))
-plt.bar(df['ExtraWaysPerSkew']+8, df['Trials/Spill'], align='center', width = 0.5, color='blue')
 
+fig = plt.figure(figsize=(5.5,2.5))
+plt.bar(df['ExtraWaysPerSkew']+9, df['Trials/Spill'], align='center', width = 0.5, color='grey')
 
 ax = plt.gca()
 
 #xticks
-print()
-plt.xticks(df['ExtraWaysPerSkew']+8)
-ax.set_xlim(7.5,14.75)
+plt.xticks(df['ExtraWaysPerSkew']+9)
+ax.set_xlim(8.5,15.5)
 
 #axes labels
-plt.xlabel('Bucket Capacity',weight = 'bold')
-plt.ylabel('Iterations Per Spill',weight = 'bold')
+plt.xlabel('Bucket Capacity')
+plt.ylabel('Iterations Per Spill')
 
 #Set Y format & limts
 ax.set_yscale('log')
@@ -40,10 +40,13 @@ ax.set_ylim(0.2,3*10**10)
 
 #grid
 ax.axis('on')
+#ax.legend(facecolor="white")
+ax.grid(color="grey")
+ax.set_facecolor("white")
 
 #Text
-ax.text(13.5, 10**2, 'no spills observed\n', style='italic',
-        bbox={ 'facecolor': 'white','pad': 3}, family='serif',size='9.7',
+ax.text(14.35, 15, 'no spills observed\n', style='italic',
+        bbox={ 'facecolor': 'white','pad': 2}, family='serif',size='8',
         ha='center', va='center')
 
 fig.savefig("Fig7.pdf",bbox_inches='tight')
@@ -76,30 +79,31 @@ print("------------------------------------------------")
 ##### PLOT RESULTS #########
 
 #Set Font Size
-plt.rc('font', family='serif')
-plt.rc('font', size='14')
+#plt.rc('font', family='serif')
+plt.rc('font', size='12')
+plt.rc('axes',edgecolor='black')
 
 fig = plt.figure(figsize=(5.5,2.5))
 ax1 = plt.gca()
 
 #Plot
-ax1 = Pr_df.set_index('BallsInBucket-N')['Pr_est(N)'].plot(label='$\Pr_{est}$',color=sns.xkcd_rgb["pale red"],linestyle="--",linewidth=2, marker="o", markersize=6.5)
-ax1 = Pr_df.set_index('BallsInBucket-N')['Pr_obs(N)'].plot(ax=ax1,label='$\Pr_{obs}$',color=sns.xkcd_rgb["blue"], marker="*", markersize=10, linewidth=0)
+ax1 = Pr_df.set_index('BallsInBucket-N')['Pr_est(N)'].plot(label='$Estimated$',color='r',linestyle="--",linewidth=2, marker="o", markersize=6.5)
+ax1 = Pr_df.set_index('BallsInBucket-N')['Pr_obs(N)'].plot(ax=ax1,label='$Experimental$',color='b', marker="*", markersize=10, linewidth=0)
 
 #Get Axes
 ax1 = plt.gca()
 
 #legend
-legend_properties={'size':14}
-ax1.legend(loc='center',prop=legend_properties)
+#legend_properties={'size':14}
+ax1.legend(facecolor="white")
 
 
 #xticks
 ax1.set_xlim(-1,17)
 
 #axes labels
-plt.xlabel('Number of Balls (N) in a Bucket',weight='bold')
-plt.ylabel('Pr.(Bucket with N balls)',weight = 'bold')
+plt.xlabel('Number of Balls (N) in a Bucket')
+plt.ylabel('Pr(Bucket with N balls)')
 
 #Set Y format & limts
 ax1.set_yscale('log')
@@ -108,6 +112,8 @@ ax1.set_yticks([1,10**-5,10**-10,10**-15,10**-20,10**-25,10**-30,10**-35])
 
 #grid
 ax1.axis('on')
+ax1.grid(color="grey")
+ax1.set_facecolor("white")
 
 fig.savefig("Fig8.pdf",bbox_inches='tight',dpi=300)
 
