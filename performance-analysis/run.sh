@@ -3,12 +3,10 @@
 mkdir -p maya/results
 mkdir -p mirage/results
 
-######--------------- MIRAGE Configuration -----------------####
 
+####-----------------------------------------Dead blocks------------------------------------####
 
 cd mirage/
-
-####-----------------Deadblocks-----------------------------###
 echo "Running Baseline Single-Core-2MB SPEC_2017"
 ./run_1core_spec.sh bin/baseline_1core_2MB 200 200 baseline_1core_2MB
 echo "Running Baseline Single-Core-2MB GAP"
@@ -20,11 +18,15 @@ echo "Running Mirage Single-Core-2MB GAP"
 ./run_1core_gap.sh bin/mirage_1core_2MB 200 200 mirage_1core_2MB
 cd ../
 
+####--------------------------------------Multi-core Baseline-------------------------------####
+
 cd mirage/
 echo "Running Baseline Single-Core-16MB-8slices SPEC_2017"
 ./run_1core_spec.sh bin/baseline_1core_2MB_8slices 200 200 baseline_1core_16MB_8slices
 echo "Running Baseline Eight-Core-16MB SPEC_2017"
 ./run_8core_spec.sh bin/baseline_8core_2MB 200 200 baseline_8core_16MB
+
+####----------------------------------------Multi-core Maya---------------------------------####
 
 cd ../maya/
 echo "Running Maya Single-Core-12MB-1way-8slices SPEC_2017"

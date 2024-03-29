@@ -23,7 +23,7 @@ maya_norm = maya_data["Weighted speedup"]/baseline_data["Weighted speedup"]
 mirage_norm = mirage_data["Weighted speedup"]/baseline_data["Weighted speedup"]
 
 comp_maya_mirage = pd.DataFrame([maya_data['Benchmarks'],maya_norm, mirage_norm], index=['Benchmarks', 'Maya', 'Mirage']).transpose()
-print(comp_maya_mirage.to_string())
+#print(comp_maya_mirage.to_string())
 
 last_bench = 'na'
 
@@ -119,8 +119,8 @@ width = 0.3
 # Plotting
 
 ind = np.arange(len(avg_deadblock['Benchmarks']))
-plt.bar(ind , avg_deadblock['Baseline'] , width, label='Baseline')
-plt.bar(ind + width, avg_deadblock['Mirage'], width, label='Mirage')
+_ = plt.bar(ind , avg_deadblock['Baseline'] , width, label='Baseline')
+_ = plt.bar(ind + width, avg_deadblock['Mirage'], width, label='Mirage')
 plt.xticks(ind + width / 2, avg_deadblock['Benchmarks'])
 plt.title('Deadblockks')
 # plt.xlabel('Benchmarks')
@@ -135,8 +135,8 @@ plt.savefig('Fig1.pdf', format='pdf')
 
 plt.clf()
 ind = np.arange(len(df_gmean_comp))
-plt.bar(ind + width, gmean_comp['Maya'] , width, label='Maya')
-plt.bar(ind , gmean_comp['Mirage'], width, label='Mirage')
+_ = plt.bar(ind + width, gmean_comp['Maya'] , width, label='Maya')
+_ = plt.bar(ind , gmean_comp['Mirage'], width, label='Mirage')
 plt.xticks(ind + width / 2, gmean_comp['Benchmarks'])
 plt.title('Performance')
 # plt.xlabel('Benchmarks')
@@ -149,4 +149,4 @@ plt.grid(axis='x')
 
 plt.savefig('Fig10.pdf', format='pdf')
 
-plt.show()
+#plt.show()

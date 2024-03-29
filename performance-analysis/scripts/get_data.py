@@ -1,4 +1,5 @@
 import os
+import sys
 import pandas as pd
 import numpy as np
 
@@ -45,9 +46,13 @@ def get_first_two_digits(line):
     else:
         return 5
 
-
-path_spec = "maya/original_results/maya_8core_12MB_spec"
-path_gap = "maya/original_results/maya_8core_12MB_gap"
+if (int(sys.argv[1]) == 1):
+	path_spec = "../maya/original_results/maya_8core_12MB_spec"
+	path_gap = "../maya/original_results/maya_8core_12MB_gap"
+else:
+    path_spec = "../maya/results/maya_8core_12MB_spec"
+    path_gap = "../maya/results/maya_8core_12MB_gap"
+	
 ipc_maya_multicore = {}
 List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
@@ -62,7 +67,7 @@ for files in List_mod:
         pass
     else:
         List_spec.remove(files)
-print(len(List_spec))
+#print(len(List_spec))
 
 
 List_mod = List_gap.copy()
@@ -71,7 +76,7 @@ for files in List_mod:
         pass
     else:
         List_gap.remove(files)
-print(len(List_gap))
+#print(len(List_gap))
 
 
 sorted_data = sorted(List_spec, key=get_number_between_dash_and_B)
@@ -115,14 +120,19 @@ for lists in [sorted_list_spec, sorted_list_gap]:
     lookup_dir = cwd + "/" +path_gap + "/" 
 # print(ipc)
 df_ipc_maya_multicore = pd.DataFrame(ipc_maya_multicore)
-print(df_ipc_maya_multicore.transpose().to_string())
+#print(df_ipc_maya_multicore.transpose().to_string())
 
 
 
 ###-----------------------------------MAYA Single Core-------------------------------------###
 
-path_spec = "maya/original_results/maya_1core_12MB_8slices_spec"
-path_gap = "maya/original_results/maya_1core_12MB_8slices_gap"
+if (int(sys.argv[1]) == 1):
+    path_spec = "../maya/original_results/maya_1core_12MB_8slices_spec"
+    path_gap = "../maya/original_results/maya_1core_12MB_8slices_gap"
+else:
+    path_spec = "../maya/results/maya_1core_12MB_8slices_spec"
+    path_gap = "../maya/results/maya_1core_12MB_8slices_gap"
+
 ipc_maya_singlecore = {}
 List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
@@ -137,7 +147,7 @@ for files in List_mod:
         pass
     else:
         List_spec.remove(files)
-print(len(List_spec))
+#print(len(List_spec))
 
 
 List_mod = List_gap.copy()
@@ -146,7 +156,7 @@ for files in List_mod:
         pass
     else:
         List_gap.remove(files)
-print(len(List_gap))
+#print(len(List_gap))
 
 
 sorted_data = sorted(List_spec, key=get_number_between_dash_and_B)
@@ -190,7 +200,7 @@ for lists in [sorted_list_spec, sorted_list_gap]:
 # print(ipc)
     
 df_ipc_maya_singlecore = pd.DataFrame(ipc_maya_singlecore, index = ['Single Core IPC'])
-print(df_ipc_maya_singlecore.transpose().to_string())
+#print(df_ipc_maya_singlecore.transpose().to_string())
 
 weighted_speedup_maya = pd.concat([df_ipc_maya_multicore, df_ipc_maya_singlecore])
 raw_ipc = df_ipc_maya_multicore.sum(axis=0)
@@ -200,14 +210,19 @@ weighted_speedup_value = weighted_speedup_maya.iloc[9].div(weighted_speedup_maya
 weighted_speedup_column = pd.DataFrame([weighted_speedup_value], columns=weighted_speedup_maya.columns, index=['Weighted speedup'])
 weighted_speedup_maya = pd.concat([weighted_speedup_maya, weighted_speedup_column])
 
-print(weighted_speedup_maya.transpose().to_string())
+#print(weighted_speedup_maya.transpose().to_string())
 weighted_speedup_maya.transpose().to_csv("Homogeneous_weighted_speedup_MAYA.csv")
 
 
 ###-------------------GET MIRAGE Multicore Results--------------------------###
 
-path_spec = "mirage/original_results/mirage_8core_16MB_spec"
-path_gap = "mirage/original_results/mirage_8core_16MB_gap"
+if (int(sys.argv[1]) == 1):
+    path_spec = "../mirage/original_results/mirage_8core_16MB_spec"
+    path_gap = "../mirage/original_results/mirage_8core_16MB_gap"
+else:
+    path_spec = "../mirage/results/mirage_8core_16MB_spec"
+    path_gap = "../mirage/results/mirage_8core_16MB_gap"
+
 ipc_maya_multicore = {}
 List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
@@ -222,7 +237,7 @@ for files in List_mod:
         pass
     else:
         List_spec.remove(files)
-print(len(List_spec))
+#print(len(List_spec))
 
 
 List_mod = List_gap.copy()
@@ -231,7 +246,7 @@ for files in List_mod:
         pass
     else:
         List_gap.remove(files)
-print(len(List_gap))
+#print(len(List_gap))
 
 
 sorted_data = sorted(List_spec, key=get_number_between_dash_and_B)
@@ -275,14 +290,19 @@ for lists in [sorted_list_spec, sorted_list_gap]:
     lookup_dir = cwd + "/" +path_gap + "/" 
 # print(ipc)
 df_ipc_maya_multicore = pd.DataFrame(ipc_maya_multicore)
-print(df_ipc_maya_multicore.transpose().to_string())
+#print(df_ipc_maya_multicore.transpose().to_string())
 
 
 
 ###-----------------------------------MIRAGE Single Core-------------------------------------###
 
-path_spec = "mirage/original_results/mirage_1core_16MB_8slices_spec"
-path_gap = "mirage/original_results/mirage_1core_16MB_8slices_gap"
+if (int(sys.argv[1]) == 1):
+    path_spec = "../mirage/original_results/mirage_1core_16MB_8slices_spec"
+    path_gap = "../mirage/original_results/mirage_1core_16MB_8slices_gap"
+else:
+    path_spec = "../mirage/results/mirage_1core_16MB_8slices_spec"
+    path_gap = "../mirage/results/mirage_1core_16MB_8slices_gap"
+
 ipc_maya_singlecore = {}
 List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
@@ -297,7 +317,7 @@ for files in List_mod:
         pass
     else:
         List_spec.remove(files)
-print(len(List_spec))
+#print(len(List_spec))
 
 
 List_mod = List_gap.copy()
@@ -306,7 +326,7 @@ for files in List_mod:
         pass
     else:
         List_gap.remove(files)
-print(len(List_gap))
+#print(len(List_gap))
 
 
 sorted_data = sorted(List_spec, key=get_number_between_dash_and_B)
@@ -350,7 +370,7 @@ for lists in [sorted_list_spec, sorted_list_gap]:
 # print(ipc)
     
 df_ipc_maya_singlecore = pd.DataFrame(ipc_maya_singlecore, index = ['Single Core IPC'])
-print(df_ipc_maya_singlecore.transpose().to_string())
+#print(df_ipc_maya_singlecore.transpose().to_string())
 
 weighted_speedup_maya = pd.concat([df_ipc_maya_multicore, df_ipc_maya_singlecore])
 raw_ipc = df_ipc_maya_multicore.sum(axis=0)
@@ -360,7 +380,7 @@ weighted_speedup_value = weighted_speedup_maya.iloc[9].div(weighted_speedup_maya
 weighted_speedup_column = pd.DataFrame([weighted_speedup_value], columns=weighted_speedup_maya.columns, index=['Weighted speedup'])
 weighted_speedup_maya = pd.concat([weighted_speedup_maya, weighted_speedup_column])
 
-print(weighted_speedup_maya.transpose().to_string())
+#print(weighted_speedup_maya.transpose().to_string())
 weighted_speedup_maya.transpose().to_csv("Homogeneous_weighted_speedup_MIRAGE.csv")
 
 
@@ -368,8 +388,13 @@ weighted_speedup_maya.transpose().to_csv("Homogeneous_weighted_speedup_MIRAGE.cs
 
 ###-------------------GET BASELINE Multicore Results--------------------------###
 
-path_spec = "mirage/original_results/baseline_8core_16MB_spec"
-path_gap = "mirage/original_results/baseline_8core_16MB_gap"
+if (int(sys.argv[1]) == 1):
+    path_spec = "../mirage/original_results/baseline_8core_16MB_spec"
+    path_gap = "../mirage/original_results/baseline_8core_16MB_gap"
+else:
+    path_spec = "../mirage/results/baseline_8core_16MB_spec"
+    path_gap = "../mirage/results/baseline_8core_16MB_gap"
+
 ipc_maya_multicore = {}
 List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
@@ -384,7 +409,7 @@ for files in List_mod:
         pass
     else:
         List_spec.remove(files)
-print(len(List_spec))
+#print(len(List_spec))
 
 
 List_mod = List_gap.copy()
@@ -393,7 +418,7 @@ for files in List_mod:
         pass
     else:
         List_gap.remove(files)
-print(len(List_gap))
+#print(len(List_gap))
 
 
 sorted_data = sorted(List_spec, key=get_number_between_dash_and_B)
@@ -437,14 +462,19 @@ for lists in [sorted_list_spec, sorted_list_gap]:
     lookup_dir = cwd + "/" +path_gap + "/" 
 # print(ipc)
 df_ipc_maya_multicore = pd.DataFrame(ipc_maya_multicore)
-print(df_ipc_maya_multicore.transpose().to_string())
+#print(df_ipc_maya_multicore.transpose().to_string())
 
 
 
 ###-----------------------------------BASELINE Single Core-------------------------------------###
 
-path_spec = "mirage/original_results/baseline_1core_16MB_8slices_spec"
-path_gap = "mirage/original_results/baseline_1core_16MB_8slices_gap"
+if (int(sys.argv[1]) == 1):
+    path_spec = "../mirage/original_results/baseline_1core_16MB_8slices_spec"
+    path_gap = "../mirage/original_results/baseline_1core_16MB_8slices_gap"
+else:
+    path_spec = "../mirage/results/baseline_1core_16MB_8slices_spec"
+    path_gap = "../mirage/results/baseline_1core_16MB_8slices_gap"
+
 ipc_maya_singlecore = {}
 List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
@@ -459,7 +489,7 @@ for files in List_mod:
         pass
     else:
         List_spec.remove(files)
-print(len(List_spec))
+#print(len(List_spec))
 
 
 List_mod = List_gap.copy()
@@ -468,7 +498,7 @@ for files in List_mod:
         pass
     else:
         List_gap.remove(files)
-print(len(List_gap))
+#print(len(List_gap))
 
 
 sorted_data = sorted(List_spec, key=get_number_between_dash_and_B)
@@ -512,7 +542,7 @@ for lists in [sorted_list_spec, sorted_list_gap]:
 # print(ipc)
     
 df_ipc_maya_singlecore = pd.DataFrame(ipc_maya_singlecore, index = ['Single Core IPC'])
-print(df_ipc_maya_singlecore.transpose().to_string())
+#print(df_ipc_maya_singlecore.transpose().to_string())
 
 weighted_speedup_maya = pd.concat([df_ipc_maya_multicore, df_ipc_maya_singlecore])
 raw_ipc = df_ipc_maya_multicore.sum(axis=0)
@@ -522,16 +552,20 @@ weighted_speedup_value = weighted_speedup_maya.iloc[9].div(weighted_speedup_maya
 weighted_speedup_column = pd.DataFrame([weighted_speedup_value], columns=weighted_speedup_maya.columns, index=['Weighted speedup'])
 weighted_speedup_maya = pd.concat([weighted_speedup_maya, weighted_speedup_column])
 
-print(weighted_speedup_maya.transpose().to_string())
+#print(weighted_speedup_maya.transpose().to_string())
 weighted_speedup_maya.transpose().to_csv("Homogeneous_weighted_speedup_BASELINE.csv")
 
 
 
 ###---------------------Get Deadblocks--------------------------------------------###############
 
+if (int(sys.argv[1]) == 1):
+    path_spec = "../mirage/original_results/baseline_1core_2MB_spec"
+    path_gap = "../mirage/original_results/baseline_1core_2MB_gap"
+else:
+    path_spec = "../mirage/results/baseline_1core_2MB_spec"
+    path_gap = "../mirage/results/baseline_1core_2MB_gap"
 
-path_spec = "mirage/original_results/baseline_1core_2MB_spec"
-path_gap = "mirage/original_results/baseline_1core_2MB_gap"
 base_deadblocks = {}
 List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
@@ -546,7 +580,7 @@ for files in List_mod:
         pass
     else:
         List_spec.remove(files)
-print(len(List_spec))
+#print(len(List_spec))
 
 
 List_mod = List_gap.copy()
@@ -555,7 +589,7 @@ for files in List_mod:
         pass
     else:
         List_gap.remove(files)
-print(len(List_gap))
+#print(len(List_gap))
 
 
 sorted_data = sorted(List_spec, key=get_number_between_dash_and_B)
@@ -597,14 +631,19 @@ for lists in [sorted_list_spec, sorted_list_gap]:
     lookup_dir = cwd + "/" +path_gap + "/" 
 # print(ipc)
 df_base_deadblocks = pd.DataFrame(base_deadblocks, index = ['Baseline'])
-print(df_base_deadblocks.transpose().to_string())
+#print(df_base_deadblocks.transpose().to_string())
 
 
 
 ###-----------------------------Get Mirage Deadblocks-----------------------------###
 
-path_spec = "mirage/original_results/mirage_1core_2MB_spec"
-path_gap = "mirage/original_results/mirage_1core_2MB_gap"
+if (int(sys.argv[1]) == 1):
+    path_spec = "../mirage/original_results/mirage_1core_2MB_spec"
+    path_gap = "../mirage/original_results/mirage_1core_2MB_gap"
+else:
+    path_spec = "../mirage/results/mirage_1core_2MB_spec"
+    path_gap = "../mirage/results/mirage_1core_2MB_gap"
+
 mirage_deadblocks = {}
 List_spec = os.listdir(path_spec)
 List_gap = os.listdir(path_gap)
@@ -619,7 +658,7 @@ for files in List_mod:
         pass
     else:
         List_spec.remove(files)
-print(len(List_spec))
+#print(len(List_spec))
 
 
 List_mod = List_gap.copy()
@@ -628,7 +667,7 @@ for files in List_mod:
         pass
     else:
         List_gap.remove(files)
-print(len(List_gap))
+#print(len(List_gap))
 
 
 sorted_data = sorted(List_spec, key=get_number_between_dash_and_B)
@@ -673,7 +712,7 @@ df_mirage_deadblocks = pd.DataFrame(mirage_deadblocks, index=["Mirage"])
 
 
 df_deadblocks = pd.concat([df_base_deadblocks, df_mirage_deadblocks])
-print(df_deadblocks.transpose().to_string())
+#print(df_deadblocks.transpose().to_string())
 df_deadblocks.transpose().to_csv("Deadblocks.csv")
 
 
