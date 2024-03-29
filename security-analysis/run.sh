@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-NUM_ITERATIONS=${1:-100} # $1
+cd results;
+
+NUM_ITERATIONS=1000
 
 echo "Running Security Simulation for 6-Ways"
 mkdir -p raw_results;
@@ -8,7 +10,7 @@ rm -rf raw_results/*;
 
 for extra_ways_per_skew in 1 2 3 4 5 6
 do
-	stdbuf -oL ../../bin/maya6Ways.o $extra_ways_per_skew $NUM_ITERATIONS 1 \
+	stdbuf -oL ../bin/maya6Ways.o $extra_ways_per_skew $NUM_ITERATIONS 1 \
                > raw_results/maya6ways.${extra_ways_per_skew}extraways.out &
 done
 
@@ -25,3 +27,5 @@ done
 
 ## Generate the Bucket Probabilities Result (Fig-9, Fig-10)
 ./get_bucket_prob.sh
+
+
