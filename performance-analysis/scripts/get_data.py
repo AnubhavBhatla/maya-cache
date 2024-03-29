@@ -37,7 +37,7 @@ def get_first_two_digits(line):
     # Extract the first 3 digits from the string
     if (line[:2] == 'bc'):
         return 1
-    elif (line[:2] == 'bfs'):
+    elif (line[:3] == 'bfs'):
         return 2
     elif (line[:2] == 'cc'):
         return 3

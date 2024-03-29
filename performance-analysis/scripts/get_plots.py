@@ -18,6 +18,7 @@ mirage_data.columns.values[0] = 'Benchmarks'
 baseline_data.columns.values[0] = 'Benchmarks'
 deadblocks_data.columns.values[0] = 'Benchmarks'
 
+gap_list = ['bc', 'bfs', 'cc', 'pr', 'sssp']
 
 maya_norm = maya_data["Weighted speedup"]/baseline_data["Weighted speedup"]
 mirage_norm = mirage_data["Weighted speedup"]/baseline_data["Weighted speedup"]
@@ -69,6 +70,27 @@ gmean_comp['Maya'].append(gmean(gmean_list[0]))
 gmean_comp['Mirage'].append(gmean(gmean_list[1]))
 
 df_gmean_comp = pd.DataFrame(gmean_comp)
+
+
+
+
+gmean_comp['Benchmarks'].append("Geomean-SPEC")
+gmean_comp['Maya'].append(gmean(df_gmean_comp[~df_gmean_comp['Benchmarks'].isin( gap_list)][ 'Maya']))
+gmean_comp['Mirage'].append(gmean(df_gmean_comp[~df_gmean_comp['Benchmarks'].isin( gap_list)][ 'Mirage']))
+
+gmean_comp['Benchmarks'].append("Geomean-GAP")
+gmean_comp['Maya'].append(gmean(df_gmean_comp[df_gmean_comp['Benchmarks'].isin( gap_list)][ 'Maya']))
+gmean_comp['Mirage'].append(gmean(df_gmean_comp[df_gmean_comp['Benchmarks'].isin( gap_list)][ 'Mirage']))
+
+gmean_comp['Benchmarks'].append("Geomean-ALL")
+gmean_comp['Maya'].append(gmean(df_gmean_comp['Maya']))
+gmean_comp['Mirage'].append(gmean(df_gmean_comp['Mirage']))
+
+
+
+
+
+df_gmean_comp = pd.DataFrame(gmean_comp)
 df_gmean_comp.to_csv("gmean_comp.csv")
 
 
@@ -103,6 +125,11 @@ for i in deadblocks_data['Benchmarks']:
 avg_deadblock['Baseline'].append(np.mean(mean_list[0]))
 avg_deadblock['Mirage'].append(np.mean(mean_list[1]))
 
+avg_deadblock['Benchmarks'].append("AVERAGE")
+avg_deadblock['Mirage'].append(np.mean(avg_deadblock['Mirage']))
+avg_deadblock['Baseline'].append(np.mean(avg_deadblock['Baseline']))
+
+
 
 
 # Melt the DataFrame to have a single value column and a 'variable' column
@@ -114,7 +141,7 @@ plt.figure(figsize=(16, 8))
 # sns.set_palette('gray_r')
 # sns.barplot(data=df_melted, x='Benchmarks', y='Value', hue='Variable')
 
-width = 0.3       
+width = 0.4       
 
 # Plotting
 
@@ -134,7 +161,7 @@ plt.savefig('Fig1.pdf', format='pdf')
 
 
 plt.clf()
-ind = np.arange(len(df_gmean_comp))
+ind = np.arange(len(gmean_comp['Benchmarks']))
 _ = plt.bar(ind + width, gmean_comp['Maya'] , width, label='Maya')
 _ = plt.bar(ind , gmean_comp['Mirage'], width, label='Mirage')
 plt.xticks(ind + width / 2, gmean_comp['Benchmarks'])
