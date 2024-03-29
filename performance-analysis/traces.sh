@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Downloading required SPEC-2017 traces"
+
 # Check if wget is installed
 if ! command -v wget &> /dev/null; then
     echo "wget is not installed. Please install wget before running this script."
