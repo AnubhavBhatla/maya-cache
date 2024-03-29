@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns; sns.set()
 import math
 from matplotlib.ticker import PercentFormatter
 import matplotlib.cm as cm
@@ -137,9 +136,6 @@ df_melted = pd.melt(pd.DataFrame(gmean_comp), id_vars=['Benchmarks'], var_name='
 
 # Plot side-by-side bar plot
 plt.figure(figsize=(16, 5))
-# sns.set_style('white')
-# sns.set_palette('gray_r')
-# sns.barplot(data=df_melted, x='Benchmarks', y='Value', hue='Variable')
 
 width = 0.3       
 
