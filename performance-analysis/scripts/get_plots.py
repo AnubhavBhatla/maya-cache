@@ -156,7 +156,7 @@ plt.ylabel('% of dead blocks', fontsize = 15)
 plt.legend()
 plt.xticks(rotation=45, horizontalalignment='right')
 plt.grid(axis='x')
-
+plt.subplots_adjust(bottom=0.15)
 plt.savefig('Fig1.pdf', format='pdf')
 
 
@@ -173,7 +173,7 @@ plt.ylim(.87, 1.2)
 plt.legend()
 plt.xticks(rotation=45, horizontalalignment='right')
 plt.grid(axis='x')
-
+plt.subplots_adjust(bottom=0.16)
 plt.savefig('Fig10.pdf', format='pdf')
 
 #plt.show()
