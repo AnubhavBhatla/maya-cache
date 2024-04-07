@@ -8,13 +8,7 @@ if ! command -v wget &> /dev/null; then
     exit 1
 fi
 
-# Check if input file is provided
-if [ $# -eq 0 ]; then
-    echo "Usage: $0 <input_file>"
-    exit 1
-fi
-
-input_file=$1
+input_file=scripts/trace_links.txt
 
 # Check if input file exists
 if [ ! -f "$input_file" ]; then

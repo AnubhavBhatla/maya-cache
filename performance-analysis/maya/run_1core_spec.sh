@@ -34,9 +34,9 @@ if ! [[ $N_SIM =~ $re ]] || [ -z $N_SIM ]; then
     exit 1
 fi
 
-cd $TRACE_DIR
+mkdir -p $(pwd)/results/${OPTION}
 
-mkdir -p $(pwd)/../../maya/results/${OPTION}
+cd $TRACE_DIR
 
 for TRACE in *;
 do

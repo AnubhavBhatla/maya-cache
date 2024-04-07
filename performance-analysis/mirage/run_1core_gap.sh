@@ -34,16 +34,16 @@ if ! [[ $N_SIM =~ $re ]] || [ -z $N_SIM ]; then
     exit 1
 fi
 
-cd $TRACE_DIR
+mkdir -p $(pwd)/results/$OPTION
 
-mkdir -p $(pwd)/../$OPTION
+cd $TRACE_DIR
 
 for TRACE in *;
 do
     if [ "$TRACE" != "wget-log" ]
     then
 	name=${TRACE%.trace.gz}
-	(./../${BINARY} -warmup_instructions ${N_WARM}000000 -simulation_instructions ${N_SIM}000000 -traces ${TRACE_DIR}/${TRACE}) > $(pwd)/../${OPTION}/${name}_${N_WARM}M_${N_SIM}M.txt &
+	(./../../mirage/${BINARY} -warmup_instructions ${N_WARM}000000 -simulation_instructions ${N_SIM}000000 -traces ${TRACE_DIR}/${TRACE}) > $(pwd)/../../mirage/results/${OPTION}/${name}_${N_WARM}M_${N_SIM}M.txt &
     else
 	continue
     fi
