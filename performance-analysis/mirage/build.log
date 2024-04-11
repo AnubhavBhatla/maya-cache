@@ -1,4 +1,4 @@
-Building multi-core ChampSim...
+Building single-core ChampSim...
 
 rm -f -r obj
 Generating dependencies for src/ring.cc...
@@ -33,12 +33,12 @@ Linking bin/champsim...
 
 [1mChampSim is successfully built
 Branch Predictor: bimodal
-L1D Prefetcher: ipcp
-L2C Prefetcher: ipcp
+L1D Prefetcher: no
+L2C Prefetcher: no
 LLC Prefetcher: no
-LLC Replacement: hawkeye
-Cores: 8
+LLC Replacement: srrip
+Cores: 1
 CEASER_rq_wq_ratio : 21
 Remapping : 0
-Binary: bin/bimodal-ipcp-ipcp-no-hawkeye-0-1-1-3-0-1-8core_mirage
+Binary: bin/bimodal-no-no-no-srrip-0-1-1-3-0-1-1core-1core_llc
 

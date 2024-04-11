@@ -27,7 +27,7 @@
 #define LLC_WQ_SIZE L2C_MSHR_SIZE*2
 #define LLC_PQ_SIZE 32 
 #define LLC_MSHR_SIZE 64 
-#define NUM_SLICES 8 // currently we can have either NUM_SLICES = 1 or NUM_SLICES = NUM_CPUS 
+#define NUM_SLICES 1 // currently we can have either NUM_SLICES = 1 or NUM_SLICES = NUM_CPUS 
 
 
 #define DRAM_CHANNELS 1 ////   default: assuming one DIMM per one channel 4GB * 1 => 4GB off-chip memory

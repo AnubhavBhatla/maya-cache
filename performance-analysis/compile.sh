@@ -5,7 +5,7 @@ echo "Building Baseline Single-Core-2MB"
 
 cd mirage
 ./build_champsim.sh bimodal no no no srrip 1 0 -1 0 1 1 3 0 1 1 > build.log
-mv bin/bimodal-ipcp-ipcp-no-hawkeye-0-1-1-3-0-1-1core-1core_llc bin/baseline_1core_2MB
+mv bin/bimodal-no-no-no-srrip-0-1-1-3-0-1-1core-1core_llc bin/baseline_1core_2MB
 cd ../
 
 echo "Building Baseline Single-Core-16MB-8slices"
@@ -28,7 +28,7 @@ cd mirage
 sed -i.bak 's/\<MIRAGE 0\>/MIRAGE 1/g' inc/cache.h
 ./build_champsim.sh bimodal no no no srrip 1 0 -1 0 1 1 3 0 1 1 > build.log
 sed -i.bak 's/\<MIRAGE 1\>/MIRAGE 0/g' inc/cache.h
-mv bin/bimodal-ipcp-ipcp-no-hawkeye-0-1-1-3-0-1-1core-1core_llc bin/mirage_1core_2MB
+mv bin/bimodal-no-no-no-srrip-0-1-1-3-0-1-1core-1core_llc bin/mirage_1core_2MB
 cd ../
 
 echo "Building Mirage Single-Core-16MB-8slices"

@@ -48,8 +48,8 @@ if (int(sys.argv[1]) == 1):
     path_spec = "../mirage/original_results/baseline_1core_2MB_spec"
     path_gap = "../mirage/original_results/baseline_1core_2MB_gap"
 else:
-    path_spec = "../mirage/results/baseline_1core_2MB_spec_dead_v2"
-    path_gap = "../mirage/results/baseline_1core_2MB_gap_dead_v2"
+    path_spec = "../mirage/results/baseline_1core_2MB_spec_dead"
+    path_gap = "../mirage/results/baseline_1core_2MB_gap_dead"
 
 base_deadblocks = {}
 List_spec = os.listdir(path_spec)
@@ -126,8 +126,8 @@ if (int(sys.argv[1]) == 1):
     path_spec = "../mirage/original_results/mirage_1core_2MB_spec"
     path_gap = "../mirage/original_results/mirage_1core_2MB_gap"
 else:
-    path_spec = "../mirage/results/mirage_1core_2MB_spec"
-    path_gap = "../mirage/results/mirage_1core_2MB_gap"
+    path_spec = "../mirage/results/mirage_1core_2MB_spec_dead"
+    path_gap = "../mirage/results/mirage_1core_2MB_gap_dead"
 
 mirage_deadblocks = {}
 List_spec = os.listdir(path_spec)
