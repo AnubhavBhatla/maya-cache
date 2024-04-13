@@ -48,8 +48,8 @@ if (int(sys.argv[1]) == 1):
     path_spec = "../mirage/original_results/baseline_1core_2MB_spec"
     path_gap = "../mirage/original_results/baseline_1core_2MB_gap"
 else:
-    path_spec = "../mirage/results/baseline_1core_2MB_spec_dead"
-    path_gap = "../mirage/results/baseline_1core_2MB_gap_dead"
+    path_spec = "../mirage/results/baseline_1core_2MB_spec"
+    path_gap = "../mirage/results/baseline_1core_2MB_gap"
 
 base_deadblocks = {}
 List_spec = os.listdir(path_spec)
@@ -102,10 +102,17 @@ for lists in [sorted_list_spec, sorted_list_gap]:
                         # Check if the phrase is present in the line
                         if ("Deadblock percentage" in line):
                             ipc_List.append(float(line.split()[6]))
+                            base_deadblocks[file[:file.rfind('_200M_200', )]] = ipc_List
+                        
+                    if(len(ipc_List) == 0):
+                        base_deadblocks[file[:file.rfind('_200M_200', )]] = [0]
+                        print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for deadblock simulation")
+
+                        
 
                 f.close()
                 
-                base_deadblocks[file[:file.rfind('_200M_200', )]] = ipc_List
+                
 
 
         # Handle exceptions if the file doesn't exist or there's an error in reading it
@@ -126,8 +133,8 @@ if (int(sys.argv[1]) == 1):
     path_spec = "../mirage/original_results/mirage_1core_2MB_spec"
     path_gap = "../mirage/original_results/mirage_1core_2MB_gap"
 else:
-    path_spec = "../mirage/results/mirage_1core_2MB_spec_dead"
-    path_gap = "../mirage/results/mirage_1core_2MB_gap_dead"
+    path_spec = "../mirage/results/mirage_1core_2MB_spec"
+    path_gap = "../mirage/results/mirage_1core_2MB_gap"
 
 mirage_deadblocks = {}
 List_spec = os.listdir(path_spec)
@@ -180,10 +187,14 @@ for lists in [sorted_list_spec, sorted_list_gap]:
                         # Check if the phrase is present in the line
                         if ("Deadblock percentage" in line):
                             ipc_List.append(float(line.split()[6]))
+                            mirage_deadblocks[file[:file.rfind('_200M_200', )]] = ipc_List
+                    if (len(ipc_List)==0):
+                        mirage_deadblocks[file[:file.rfind('_200M_200', )]] = [0]
+                        print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for deadblock simulation")
 
                 f.close()
                 
-                mirage_deadblocks[file[:file.rfind('_200M_200', )]] = ipc_List
+                
 
 
         # Handle exceptions if the file doesn't exist or there's an error in reading it
@@ -275,15 +286,26 @@ for lists in [sorted_list_spec, sorted_list_gap]:
                                     ipc_List.append(float(line.split()[4]))
                                 count += 1
                     f.close()
-                
-                ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = ipc_List
+                if(len(ipc_List) != 8):
+                    
+                    ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = [0, 0, 0, 0, 0, 0, 0, 0]
+                    print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for MAYA Multicore simulation")
+                    
+                else:
+                    ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = ipc_List
 
 
         # Handle exceptions if the file doesn't exist or there's an error in reading it
         except FileNotFoundError:
-            print("File not found.")
+            print(f"{file} not found.")
+            ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = [0, 0, 0, 0, 0, 0, 0, 0]
+            print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for MAYA Multicore simulation")
+                    
         except IOError:
             print("Error while reading the file.")
+            ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = [0, 0, 0, 0, 0, 0, 0, 0]
+            print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for MAYA Multicore simulation")
+                    
     lookup_dir = cwd + "/" +path_gap + "/" 
 # print(ipc)
 df_ipc_maya_multicore = pd.DataFrame(ipc_maya_multicore)
@@ -352,17 +374,27 @@ for lists in [sorted_list_spec, sorted_list_gap]:
                             if (phrase in line):
                                 ipc_List.append(float(line.split()[4]))
                                
-                                
                     f.close()
-                
-                ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = ipc_List
+                if(len(ipc_List) == 0):
+                    ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = [0]
+                    print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for MAYA singlecore simulation")
+               
+                    
+                else:
+                    ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = ipc_List
 
 
         # Handle exceptions if the file doesn't exist or there's an error in reading it
         except FileNotFoundError:
-            print("File not found.")
+            print(f"{file} not found.")
+            ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = [0]
+            print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for MAYA singlecore simulation")
+               
         except IOError:
             print("Error while reading the file.")
+            ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = [0]
+            print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for MAYA singlecore simulation")
+               
     lookup_dir = cwd + "/" +path_gap + "/" 
 # print(ipc)
     
@@ -445,15 +477,25 @@ for lists in [sorted_list_spec, sorted_list_gap]:
                                     ipc_List.append(float(line.split()[4]))
                                 count += 1
                     f.close()
+                if(len(ipc_List) != 8):
+                    ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = [0, 0, 0, 0, 0, 0, 0, 0]
+                    print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for MIRAGE multicore simulation")
                 
-                ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = ipc_List
+                else:
+                    ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = ipc_List
 
 
         # Handle exceptions if the file doesn't exist or there's an error in reading it
         except FileNotFoundError:
-            print("File not found.")
+            print(f"{file} not found.")
+            ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = [0, 0, 0, 0, 0, 0, 0, 0]
+            print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for MIRAGE multicore simulation")
+            
         except IOError:
             print("Error while reading the file.")
+            ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = [0, 0, 0, 0, 0, 0, 0, 0]
+            print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for MIRAGE multicore simulation")
+            
     lookup_dir = cwd + "/" +path_gap + "/" 
 # print(ipc)
 df_ipc_maya_multicore = pd.DataFrame(ipc_maya_multicore)
@@ -521,18 +563,26 @@ for lists in [sorted_list_spec, sorted_list_gap]:
                             # Check if the phrase is present in the line
                             if (phrase in line):
                                 ipc_List.append(float(line.split()[4]))
-                               
-                                
                     f.close()
-                
-                ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = ipc_List
+                if(len(ipc_List) == 0):
+                    ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = [0]
+                    print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for MIRAGE singlecore simulation")
+
+                else:                
+                    ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = ipc_List
 
 
         # Handle exceptions if the file doesn't exist or there's an error in reading it
         except FileNotFoundError:
-            print("File not found.")
+            print(f"{file} not found.")
+            ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = [0]
+            print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for MIRAGE singlecore simulation")
+
         except IOError:
             print("Error while reading the file.")
+            ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = [0]
+            print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for MIRAGE singlecore simulation")
+
     lookup_dir = cwd + "/" +path_gap + "/" 
 # print(ipc)
     
@@ -617,15 +667,25 @@ for lists in [sorted_list_spec, sorted_list_gap]:
                                     ipc_List.append(float(line.split()[4]))
                                 count += 1
                     f.close()
+                if(len(ipc_List) != 8):
+                    ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = [0, 0, 0, 0, 0, 0, 0, 0]
+                    print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for Baseline multicore simulation")
+            
                 
-                ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = ipc_List
+                else:
+                    ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = ipc_List
 
 
         # Handle exceptions if the file doesn't exist or there's an error in reading it
         except FileNotFoundError:
-            print("File not found.")
+            print(f"{file} not found.")
+            ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = [0, 0, 0, 0, 0, 0, 0, 0]
+            print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for Baseline multicore simulation")
         except IOError:
             print("Error while reading the file.")
+            ipc_maya_multicore[file[:file.rfind('_200M_200', )]] = [0, 0, 0, 0, 0, 0, 0, 0]
+            print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for Baseline multicore simulation")
+
     lookup_dir = cwd + "/" +path_gap + "/" 
 # print(ipc)
 df_ipc_maya_multicore = pd.DataFrame(ipc_maya_multicore)
@@ -697,14 +757,25 @@ for lists in [sorted_list_spec, sorted_list_gap]:
                                 
                     f.close()
                 
-                ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = ipc_List
+                if(len(ipc_List) == 0):
+                    ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = [0]
+                    print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for Baseline singlecore simulation")
+            
+                else:
+                    ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = ipc_List
 
 
         # Handle exceptions if the file doesn't exist or there's an error in reading it
         except FileNotFoundError:
-            print("File not found.")
+            print(f"{file} not found.")
+            ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = [0]
+            print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for Baseline singlecore simulation")
+
         except IOError:
             print("Error while reading the file.")
+            ipc_maya_singlecore[file[:file.rfind('_200M_200', )]] = [0]
+            print(f"Benchmark {file[:file.rfind('_200M_200', )]} not completed for Baseline singlecore simulation")
+
     lookup_dir = cwd + "/" +path_gap + "/" 
 # print(ipc)
     
