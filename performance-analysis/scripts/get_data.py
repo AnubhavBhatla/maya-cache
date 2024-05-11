@@ -310,7 +310,7 @@ for lists in [sorted_list_spec, sorted_list_gap]:
 # print(ipc)
 df_ipc_maya_multicore = pd.DataFrame(ipc_maya_multicore)
 #print(df_ipc_maya_multicore.transpose().to_string())
-
+df_ipc_maya_multicore.transpose().to_csv("df_ipc_maya_multicore.csv")
 
 
 ###-----------------------------------MAYA Single Core-------------------------------------###
@@ -400,6 +400,7 @@ for lists in [sorted_list_spec, sorted_list_gap]:
     
 df_ipc_maya_singlecore = pd.DataFrame(ipc_maya_singlecore, index = ['Single Core IPC'])
 #print(df_ipc_maya_singlecore.transpose().to_string())
+
 
 weighted_speedup_maya = pd.concat([df_ipc_maya_multicore, df_ipc_maya_singlecore])
 raw_ipc = df_ipc_maya_multicore.sum(axis=0)

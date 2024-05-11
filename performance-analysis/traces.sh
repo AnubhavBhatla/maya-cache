@@ -32,6 +32,8 @@ echo "SPEC benchmarks Download complete."
 
 # Define the directory to check
 directory="traces/gap"
+unzip traces/gap.zip -d traces/gap
+rm -rf traces/gap.zip
 
 # Define the file containing the list of files to check
 file_list="scripts/gap_file_list.txt"
