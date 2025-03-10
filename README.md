@@ -2,6 +2,9 @@
 
 This repository contains the artifact for evaluating the results of the Maya Cache paper from ISCA'24. Follow the steps below to generate the results from the paper:
 
+> [!WARNING]
+> We have discovered a bug in the implementation of the PRINCE cipher for both Mirage and Maya. Please note that the current configurations are functioning correctly. However, changing the configuration may lead to unexpected behavior. This is not due to a security vulnerability in either design but rather a result of the buggy cipher code. If needed, please replace our implementation with any other publicly available lightweight cipher implementation.
+
 ------------------
 
 ## Obtain the code
